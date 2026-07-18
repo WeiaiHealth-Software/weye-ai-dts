@@ -1,46 +1,83 @@
-import React, { useState } from 'react';
-import { HomePhone } from './components/HomePhone';
-import { DoctorView } from './components/DoctorView';
-import { CrcView } from './components/CrcView';
-import { MfrView } from './components/MfrView';
+import { MoreHorizontal, User } from 'lucide-react';
+import { useState } from 'react';
+import { AgentsModule } from './components/AgentsModule';
+import { ConsultModule } from './components/ConsultModule';
+import { ProfileModule } from './components/ProfileModule';
+import { RecordsModule } from './components/RecordsModule';
+import { ToolsModule } from './components/ToolsModule';
 
-type Role = 'doc' | 'crc' | 'mfr';
+type MainTab = '问诊' | '档案' | '工具' | '智能体';
 
-export const MiniProgram: React.FC = () => {
-  const [activeRoles, setActiveRoles] = useState<Role[]>([]);
+const TABS: MainTab[] = ['问诊', '档案', '工具', '智能体'];
 
-  const handleSelectRole = (role: Role) => {
-    if (!activeRoles.includes(role)) {
-      setActiveRoles([...activeRoles, role]);
+export function MiniProgram() {
+  const [currentView, setCurrentView] = useState<'main' | 'profile'>('main');
+  const [activeTab, setActiveTab] = useState<MainTab>('问诊');
+  const [inputText, setInputText] = useState('');
+
+  const renderActiveModule = () => {
+    switch (activeTab) {
+      case '问诊':
+        return <ConsultModule inputText={inputText} onInputChange={setInputText} />;
+      case '档案':
+        return <RecordsModule />;
+      case '工具':
+        return <ToolsModule />;
+      case '智能体':
+        return <AgentsModule />;
+      default:
+        return null;
     }
   };
 
   return (
-    <div className="h-full flex flex-col bg-slate-50 p-6 overflow-hidden">
-      <div className="mb-6 text-center shrink-0">
-        <h1 className="text-2xl font-bold text-gray-800">临床试验管理系统 - 小程序端</h1>
-        <p className="text-gray-500 text-sm mt-2">点击首页大厅中的角色面板，右侧将不断叠加展开对应的操作终端以测试互动</p>
-      </div>
+    <div className="flex h-full items-center justify-center bg-gray-200 p-4 font-sans">
+      <div className="relative flex h-[812px] w-[375px] flex-col overflow-hidden rounded-[40px] border-[8px] border-gray-900 bg-white shadow-2xl">
+        <div className="absolute inset-x-0 top-0 z-50 mx-auto h-6 w-40 rounded-b-3xl bg-gray-900" />
 
-      <div className="flex-1 flex justify-start items-center overflow-x-auto no-scrollbar pb-4">
-        <div className="flex flex-row gap-12 items-center transition-all duration-500 ease-in-out pl-10 pr-10 m-auto">
-          <div className="flex flex-col items-center gap-3 relative z-10 shrink-0">
-            <div className="text-slate-500 font-bold">首页大厅</div>
-            <HomePhone onSelectRole={handleSelectRole} activeRoles={activeRoles} />
-          </div>
-          
-          {activeRoles.map(role => (
-            <div key={role} className="flex flex-col items-center gap-3 animate-fade-in-right shrink-0">
-              <div className={`font-bold ${role === 'doc' ? 'text-blue-600' : role === 'crc' ? 'text-emerald-600' : 'text-purple-600'}`}>
-                {role === 'doc' ? '医生端' : role === 'crc' ? 'CRC端' : '厂家端'}
+        {currentView === 'main' ? (
+          <div className="relative flex h-full flex-col bg-blue-50/50">
+            <div className="pointer-events-none absolute left-0 right-0 top-0 z-0 h-1/2 bg-gradient-to-b from-indigo-100 via-blue-50 to-transparent" />
+
+            <div className="relative z-10 flex items-center justify-between px-4 pb-2 pt-12">
+              <div
+                className="cursor-pointer rounded-full bg-white/80 p-2 text-blue-600 shadow-sm backdrop-blur-sm transition hover:bg-blue-100"
+                onClick={() => setCurrentView('profile')}
+              >
+                <User size={20} />
               </div>
-              {role === 'doc' && <DoctorView />}
-              {role === 'crc' && <CrcView />}
-              {role === 'mfr' && <MfrView />}
+              <div className="flex items-center space-x-2 rounded-full border border-gray-200 bg-white/50 px-3 py-1.5 backdrop-blur-sm">
+                <MoreHorizontal size={20} className="text-black" />
+                <div className="h-4 w-px bg-gray-300" />
+                <div className="flex h-5 w-5 items-center justify-center rounded-full border-[1.5px] border-black">
+                  <div className="h-2.5 w-2.5 rounded-full bg-black" />
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
+
+            <div className="relative z-10 flex items-center justify-between px-6 pb-2 pt-2">
+              {TABS.map((tab) => (
+                <div
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`relative cursor-pointer pb-1.5 text-base transition-all duration-300 ${
+                    activeTab === tab ? 'text-lg font-bold text-gray-900' : 'font-medium text-gray-500'
+                  }`}
+                >
+                  {tab}
+                  {activeTab === tab && <div className="absolute bottom-0 left-1/2 h-1 w-5 -translate-x-1/2 rounded-full bg-blue-500" />}
+                </div>
+              ))}
+            </div>
+
+            <div className="relative z-10 flex-1 overflow-hidden">
+              <div className="no-scrollbar h-full overflow-y-auto">{renderActiveModule()}</div>
+            </div>
+          </div>
+        ) : (
+          <ProfileModule onBack={() => setCurrentView('main')} />
+        )}
       </div>
     </div>
   );
-};
+}

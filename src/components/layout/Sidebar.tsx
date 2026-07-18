@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  Shuffle, 
   Database,
-  Palette,
+  // Palette,
   RefreshCw,
   ChevronDown,
   PanelLeftClose,
@@ -16,7 +15,6 @@ import classNames from 'classnames';
 
 export const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [iwrsOpen, setIwrsOpen] = useState(true);
   const [edcOpen, setEdcOpen] = useState(true);
   const [systemOpen, setSystemOpen] = useState(true);
   const location = useLocation();
@@ -29,11 +27,6 @@ export const Sidebar: React.FC = () => {
     { path: '/index', icon: <LayoutDashboard size={20} />, label: 'Dashboard 仪表盘' },
   ];
 
-  const iwrsItems = [
-    { path: '/index/projects', label: '项目管理' },
-    { path: '/index/dimensions', label: '维度管理' },
-  ];
-
   const edcItems = [
     { path: '/index/edc/projects', label: '项目管理' },
     { path: '/index/edc/appointments', label: '预约复查管理' },
@@ -41,14 +34,12 @@ export const Sidebar: React.FC = () => {
   ];
 
   const systemItems = [
-    { path: '/index/departments', label: '科室管理' },
     { path: '/index/centers', label: '中心管理' },
     { path: '/index/roles', label: '角色管理' },
     { path: '/index/users', label: '用户管理' },
     { path: '/index/system/logs', label: '日志管理' },
   ];
 
-  const iwrsActive = iwrsItems.some(i => isPathActive(i.path));
   const edcActive = edcItems.some(i => isPathActive(i.path));
   const systemActive = systemItems.some(i => isPathActive(i.path));
 
@@ -85,50 +76,6 @@ export const Sidebar: React.FC = () => {
             {!collapsed && <span className="ml-3 origin-left">{item.label}</span>}
           </NavLink>
         ))}
-
-        <div className="space-y-1">
-          <button
-            onClick={() => setIwrsOpen(!iwrsOpen)}
-            className={classNames(
-              "w-full flex items-center px-4 py-3 rounded-xl transition-all group font-medium whitespace-nowrap overflow-hidden hover:bg-slate-50 hover:text-brand-600",
-              iwrsActive ? "text-brand-600" : "text-slate-600"
-            )}
-          >
-            <span
-              className={classNames(
-                "flex-shrink-0",
-                iwrsActive ? "text-brand-600" : "text-slate-400 group-hover:text-brand-500"
-              )}
-            >
-              <Shuffle size={20} />
-            </span>
-            {!collapsed && (
-              <>
-                <span className="ml-3 flex-1 text-left">IWRS 中央随机化</span>
-                <span className={classNames("transition-transform duration-300", iwrsOpen ? "rotate-180" : "")}>
-                  <ChevronDown size={16} />
-                </span>
-              </>
-            )}
-          </button>
-          
-          {iwrsOpen && !collapsed && (
-            <div className="space-y-1">
-              {iwrsItems.map(item => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) => classNames(
-                    "flex items-center py-3 pr-4 pl-12 rounded-xl transition-all group font-medium whitespace-nowrap overflow-hidden",
-                    isActive ? "bg-brand-50 text-brand-600" : "text-slate-600 hover:bg-slate-50 hover:text-brand-600"
-                  )}
-                >
-                  <span>{item.label}</span>
-                </NavLink>
-              ))}
-            </div>
-          )}
-        </div>
 
         <div className="space-y-1">
           <button
@@ -219,7 +166,7 @@ export const Sidebar: React.FC = () => {
         </div>
 
         <div className="my-2 border-b border-slate-200"></div>
-        <NavLink
+        {/* <NavLink
           to="/index/ui-spec"
           className={({ isActive }) => classNames(
             "flex items-center px-4 py-3 rounded-xl transition-all group font-medium whitespace-nowrap overflow-hidden",
@@ -230,7 +177,7 @@ export const Sidebar: React.FC = () => {
             <Palette size={20} />
           </span>
           {!collapsed && <span className="ml-3 origin-left">系统 UI 组件规范</span>}
-        </NavLink>
+        </NavLink> */}
         <NavLink
           to="/miniprogram"
           className={({ isActive }) => classNames(
@@ -241,7 +188,7 @@ export const Sidebar: React.FC = () => {
           <span className={classNames("flex-shrink-0", location.pathname.includes("/miniprogram") ? "text-brand-600" : "text-slate-400 group-hover:text-brand-500")}>
             <Database size={20} />
           </span>
-          {!collapsed && <span className="ml-3 origin-left">临床试验管理系统小程序</span>}
+          {!collapsed && <span className="ml-3 origin-left">Eye 宝小程序</span>}
         </NavLink>
       </nav>
 

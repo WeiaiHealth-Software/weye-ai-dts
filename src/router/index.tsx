@@ -1,14 +1,9 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { MainLayout } from '@/components/layout/MainLayout'
-import { ProjectWizard } from '@/components/projects/wizard/ProjectWizard'
 import { Centers } from '@/pages/centers'
 import { CenterDetail } from '@/pages/centers/detail'
 import { Dashboard } from '@/pages/dashboard'
-import { Departments } from '@/pages/departments'
-import { Dimensions } from '@/pages/dimensions'
 import { MiniProgram } from '@/pages/miniprogram'
-import { ProjectDetail } from '@/pages/projects/detail'
-import { ProjectList } from '@/pages/projects'
 import { Profile } from '@/pages/profile'
 import { Roles } from '@/pages/roles'
 import { SystemLogs } from '@/pages/system/logs'
@@ -29,11 +24,6 @@ export function AppRoutes() {
     <Routes>
       <Route path="/index" element={<MainLayout />}>
         <Route index element={<Dashboard />} />
-        <Route path="projects" element={<ProjectList />} />
-        <Route path="projects/:projectId" element={<ProjectDetail />} />
-        <Route path="projects/create" element={<ProjectWizard />} />
-        <Route path="dimensions" element={<Dimensions />} />
-        <Route path="departments" element={<Departments />} />
         <Route path="centers" element={<Centers />} />
         <Route path="centers/:centerId" element={<CenterDetail />} />
         <Route path="roles" element={<Roles />} />

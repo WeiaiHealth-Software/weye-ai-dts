@@ -16,7 +16,7 @@ type DemoRow = {
   createdAt: string;
 };
 
-const tabs: Array<{ key: TabKey; label: string }> = [
+const tabs: Array<{ key: TabKey; label: string; }> = [
   { key: 'system', label: '系统 UI 规范' },
   { key: 'basics', label: '系统基础组件' },
   { key: 'table', label: '表格页' },

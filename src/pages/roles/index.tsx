@@ -5,37 +5,6 @@ import { useUsersStore } from '@/store/useUsersStore';
 
 const PERMISSION_MODULES = [
   {
-    id: 'project',
-    name: '项目管理',
-    permissions: [
-      { id: 'project_view', label: '查看' },
-      { id: 'project_create', label: '新增' },
-      { id: 'project_edit', label: '编辑' },
-      { id: 'project_delete', label: '删除' },
-      { id: 'project_import', label: '导入' },
-      { id: 'project_export', label: '导出' }
-    ]
-  },
-  {
-    id: 'dimension',
-    name: '维度管理',
-    permissions: [
-      { id: 'dim_view', label: '查看' },
-      { id: 'dim_create', label: '新增' },
-      { id: 'dim_edit', label: '编辑' },
-      { id: 'dim_delete', label: '删除' }
-    ]
-  },
-  {
-    id: 'department',
-    name: '科室管理',
-    permissions: [
-      { id: 'dept_view', label: '查看' },
-      { id: 'dept_create', label: '新增' },
-      { id: 'dept_delete', label: '删除' }
-    ]
-  },
-  {
     id: 'center',
     name: '中心管理',
     permissions: [
@@ -155,7 +124,7 @@ export const Roles: React.FC = () => {
                   className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer select-none ${
                     isEditMode ? 'hover:border-brand-200 hover:bg-brand-50/30' : 'opacity-80'
                   } ${
-                    activeRole === 'centeradmin' && ['project_view', 'project_create', 'center_view', 'center_edit', 'user_view', 'user_create'].includes(perm.id)
+                    activeRole === 'centeradmin' && ['center_view', 'center_edit', 'user_view', 'user_create'].includes(perm.id)
                       ? 'border-slate-200 bg-slate-50' 
                       : 'border-slate-100 bg-white'
                   }`}
@@ -164,7 +133,7 @@ export const Roles: React.FC = () => {
                     <input 
                       type="checkbox" 
                       className="peer appearance-none w-4 h-4 border border-slate-300 rounded checked:bg-brand-500 checked:border-brand-500 transition-all cursor-pointer disabled:cursor-not-allowed"
-                      checked={activeRole === 'centeradmin' && ['project_view', 'project_create', 'center_view', 'center_edit', 'user_view', 'user_create'].includes(perm.id)}
+                      checked={activeRole === 'centeradmin' && ['center_view', 'center_edit', 'user_view', 'user_create'].includes(perm.id)}
                       readOnly={!isEditMode}
                       disabled={!isEditMode}
                     />

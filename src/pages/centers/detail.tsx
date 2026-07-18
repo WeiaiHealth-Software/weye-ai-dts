@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useHeaderStore } from '../../store/useHeaderStore';
 import { CENTERS, type CenterStaff, type CenterProject } from '../../mock/centers';
-import { ArrowLeft, Building2, FolderKanban, Pencil, Plus, User, Users } from 'lucide-react';
+import { ArrowLeft, FolderKanban, Pencil, Plus, User, Users } from 'lucide-react';
 import classNames from 'classnames';
 
-type TabKey = 'overview' | 'departments' | 'crcs';
+type TabKey = 'overview' | 'crcs';
 
 const renderProgress = (currentCount: number, totalCount: number, status: CenterProject['status']) => {
   const pct = totalCount ? Math.min(100, Math.round((currentCount / totalCount) * 100)) : 0;
@@ -105,17 +105,11 @@ export const CenterDetail: React.FC = () => {
   const center = useMemo(() => CENTERS.find((c) => c.id === centerId), [centerId]);
 
   const [tab, setTab] = useState<TabKey>('overview');
-  const [activeDept, setActiveDept] = useState<string>('');
 
   useEffect(() => {
     if (!center) return;
     setTitle('中心详情', center.name, [{ text: '中心管理员', color: 'emerald' }]);
   }, [center, setTitle]);
-
-  useEffect(() => {
-    if (!center?.departments?.length) return;
-    setActiveDept((prev) => prev || center.departments[0].id);
-  }, [center]);
 
   if (!center) {
     return (
@@ -129,9 +123,6 @@ export const CenterDetail: React.FC = () => {
       </div>
     );
   }
-
-  const doctors = (center.doctors[activeDept] || []) as CenterStaff[];
-
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
@@ -157,15 +148,6 @@ export const CenterDetail: React.FC = () => {
             </div>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100">
-                <div className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
-                  <Building2 className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-[11px] text-slate-400 font-bold">科室数量</div>
-                  <div className="text-sm font-black text-slate-900">{center.stats.departments} 个</div>
-                </div>
-              </div>
               <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-100">
                 <div className="w-10 h-10 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center">
                   <Users className="w-5 h-5" />
@@ -213,20 +195,11 @@ export const CenterDetail: React.FC = () => {
             <button
               className={classNames(
                 'px-5 py-2 rounded-lg text-sm font-bold transition-all',
-                tab === 'departments' ? 'bg-white shadow-sm border border-slate-200/50 text-brand-600' : 'text-slate-500 hover:text-slate-700'
-              )}
-              onClick={() => setTab('departments')}
-            >
-              科室管理
-            </button>
-            <button
-              className={classNames(
-                'px-5 py-2 rounded-lg text-sm font-bold transition-all',
                 tab === 'crcs' ? 'bg-white shadow-sm border border-slate-200/50 text-brand-600' : 'text-slate-500 hover:text-slate-700'
               )}
               onClick={() => setTab('crcs')}
             >
-              CRC 管理
+              CRC 列表
             </button>
           </div>
         </div>
@@ -285,48 +258,9 @@ export const CenterDetail: React.FC = () => {
             </div>
           )}
 
-          {tab === 'departments' && (
-            <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
-              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/60">
-                  <div className="text-sm font-bold text-slate-900">科室列表</div>
-                </div>
-                <div className="p-4 space-y-2">
-                  {center.departments.map((d) => (
-                    <button
-                      key={d.id}
-                      onClick={() => setActiveDept(d.id)}
-                      className={classNames(
-                        'w-full flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all text-left',
-                        activeDept === d.id ? 'bg-brand-50 border-brand-200' : 'bg-white border-slate-100 hover:bg-slate-50'
-                      )}
-                    >
-                      <div className={classNames('w-9 h-9 rounded-2xl border flex items-center justify-center', d.colorClass)}>
-                        <i className={classNames(d.icon, 'text-[18px]')} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-bold text-slate-800 truncate">{d.name}</div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">点击查看成员</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-                <div className="p-4 pt-2">
-                  <button className="w-full py-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50/30 hover:bg-slate-50 text-slate-500 font-bold text-sm flex items-center justify-center gap-2">
-                    <Plus className="w-4 h-4" />
-                    新增科室
-                  </button>
-                </div>
-              </div>
-
-              <Table title="医生列表" ctaText="新增医生" rows={doctors} />
-            </div>
-          )}
-
           {tab === 'crcs' && <Table title="CRC 列表" ctaText="新增 CRC" rows={center.crcs} />}
         </div>
       </div>
     </div>
   );
 };
-

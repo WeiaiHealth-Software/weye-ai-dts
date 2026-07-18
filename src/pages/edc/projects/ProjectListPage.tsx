@@ -5,7 +5,7 @@ import { useHeaderStore } from '../../../store/useHeaderStore'
 import { useEdcProjectStore } from '../../../store/useEdcProjectStore'
 import SectionCard from '../../../components/common/SectionCard'
 import Drawer from '../../../components/overlay/Drawer'
-import { PROJECTS as iwrsProjects, ProjectSummary } from '../../../mock/projects'
+import { PROJECTS as sourceProjects, ProjectSummary } from '../../../mock/projects'
 import { classNames } from '../../../lib/classNames'
 import { statusClassMap } from '../../../lib/statusMap'
 import type { Project } from '../../../types/project'
@@ -26,24 +26,24 @@ export function ProjectListPage() {
     ])
   }, [setTitle])
 
-  const handleSyncProject = (iwrsProject: ProjectSummary) => {
+  const handleSyncProject = (sourceProject: ProjectSummary) => {
     // Check if it's already synced
-    const exists = projects.find(p => p.code === iwrsProject.code)
+    const exists = projects.find(p => p.code === sourceProject.code)
     if (exists) {
       return
     }
 
     const newEdcProject: Project = {
-      id: `P${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`, // Generate a mock ID
-      code: iwrsProject.code,
-      name: iwrsProject.title,
-      pi: iwrsProject.leader || '--',
-      sponsor: '已同步的申办方', // Placeholder since IWRS mock doesn't have sponsor
-      centers: iwrsProject.centers || [],
-      status: iwrsProject.status === '进行中' ? '筹备中' : '已结束', // Default to 筹备中
+      id: `SYNC_${sourceProject.code}`,
+      code: sourceProject.code,
+      name: sourceProject.title,
+      pi: sourceProject.leader || '--',
+      sponsor: '已同步的申办方',
+      centers: sourceProject.centers || [],
+      status: sourceProject.status === '进行中' ? '筹备中' : '已结束',
       enrolled: 0, // Fresh sync, no baseline yet
-      targetEnrollment: iwrsProject.totalCount,
-      desc: iwrsProject.description,
+      targetEnrollment: sourceProject.totalCount,
+      desc: sourceProject.description,
     }
 
     addProject(newEdcProject)
@@ -67,8 +67,8 @@ export function ProjectListPage() {
     )
   }, [projects, search])
 
-  const syncedIwrsCount = useMemo(
-    () => iwrsProjects.filter((iwrs) => projects.some((project) => project.code === iwrs.code)).length,
+  const syncedSourceCount = useMemo(
+    () => sourceProjects.filter((project) => projects.some((item) => item.code === project.code)).length,
     [projects]
   )
 
@@ -104,7 +104,7 @@ export function ProjectListPage() {
                 className="h-10 pl-4 pr-10 rounded-xl bg-white border border-blue-600 text-blue-600 text-sm font-medium hover:bg-blue-50 flex items-center gap-2 relative"
               >
                 <RefreshCw className="w-4 h-4" />
-                同步 IWRS 项目
+                同步项目库
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 hover:text-blue-600" title="此按钮只在部署完整科研系统的时候才显示，单独部署 EDC 系统的时候不带这个同步的能力">
                   <Info className="w-4 h-4" />
                 </div>
@@ -135,7 +135,7 @@ export function ProjectListPage() {
               <tbody className="divide-y divide-slate-100 bg-white">
                 {filteredProjects.length > 0 ? (
                   paginatedProjects.map((project) => {
-                    const isSynced = iwrsProjects.some(iwrs => iwrs.code === project.code)
+                    const isSynced = sourceProjects.some(item => item.code === project.code)
 
                     return (
                     <tr key={project.id} className="hover:bg-slate-50/80 transition-colors">
@@ -246,8 +246,8 @@ export function ProjectListPage() {
       <Drawer
         open={isSyncDrawerOpen}
         onClose={() => setIsSyncDrawerOpen(false)}
-        title="同步 IWRS 项目"
-        subtitle="将中央随机化系统中的项目同步至 EDC 电子数据采集系统"
+        title="同步项目库"
+        subtitle="将项目中心中的项目同步至 EDC 电子数据采集系统"
         width="720px"
         headerClassName="flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-6 pb-3.5 pt-3"
         bodyClassName="bg-slate-50 px-6 pb-6 pt-4"
@@ -261,13 +261,13 @@ export function ProjectListPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                  共 {iwrsProjects.length} 个
+                  共 {sourceProjects.length} 个
                 </span>
                 <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
-                  已同步 {syncedIwrsCount}
+                  已同步 {syncedSourceCount}
                 </span>
                 <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
-                  待同步 {iwrsProjects.length - syncedIwrsCount}
+                  待同步 {sourceProjects.length - syncedSourceCount}
                 </span>
               </div>
             </div>
@@ -284,29 +284,24 @@ export function ProjectListPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
-                {iwrsProjects.map(iwrs => {
-                  const isSynced = projects.some(p => p.code === iwrs.code)
+                {sourceProjects.map((project) => {
+                  const isSynced = projects.some((item) => item.code === project.code)
                   return (
-                    <tr key={iwrs.id} className="hover:bg-slate-50/80 transition-colors">
+                    <tr key={project.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="px-6 py-4 align-top">
                         <div className="space-y-1">
-                          <p className="line-clamp-2 text-sm font-medium leading-6 text-slate-800" title={iwrs.title}>{iwrs.title}</p>
+                          <p className="line-clamp-2 text-sm font-medium leading-6 text-slate-800" title={project.title}>{project.title}</p>
                         </div>
                       </td>
                       <td className="px-6 py-4 align-top">
                         <div className="flex flex-col items-start gap-1.5">
-                          <span className="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-600">{iwrs.code}</span>
-                          {iwrs.isFission && (
-                            <span className="shrink-0 rounded-full border border-indigo-200 bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600">
-                              裂变项目
-                            </span>
-                          )}
+                          <span className="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-600">{project.code}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 align-top text-sm text-slate-600">{iwrs.leader}</td>
+                      <td className="px-6 py-4 align-top text-sm text-slate-600">{project.leader}</td>
                       <td className="px-6 py-4 text-right align-top">
                         <button
-                          onClick={() => handleSyncProject(iwrs)}
+                          onClick={() => handleSyncProject(project)}
                           disabled={isSynced}
                           className={classNames(
                             "min-w-[60px] rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
