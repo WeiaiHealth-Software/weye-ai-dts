@@ -1,5 +1,9 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { MainLayout } from '@/components/layout/MainLayout'
+import { ArchiveAppointmentPage } from '@/pages/archive/appointments'
+import { ArchiveDetailPage } from '@/pages/archive/detail'
+import { ArchiveListPage } from '@/pages/archive/list'
+import { ArchiveTagsPage } from '@/pages/archive/tags'
 import { Centers } from '@/pages/centers'
 import { CenterDetail } from '@/pages/centers/detail'
 import { Dashboard } from '@/pages/dashboard'
@@ -32,6 +36,12 @@ export function AppRoutes() {
         <Route path="system/logs" element={<SystemLogs />} />
         <Route path="profile" element={<Profile />} />
         <Route path="ui-spec" element={<UiSpec />} />
+
+        {/* 档案管理模块 */}
+        <Route path="archive/list" element={<ArchiveListPage />} />
+        <Route path="archive/appointments" element={<ArchiveAppointmentPage />} />
+        <Route path="archive/tags" element={<ArchiveTagsPage />} />
+        <Route path="archive/:patientId" element={<ArchiveDetailPage />} />
         
         {/* EDC 子系统路由 */}
         <Route path="edc/projects" element={<EdcProjects />} />

@@ -6,6 +6,7 @@ import {
   // Palette,
   RefreshCw,
   ChevronDown,
+  FolderKanban,
   PanelLeftClose,
   PanelLeftOpen,
   ClipboardList,
@@ -15,6 +16,7 @@ import classNames from 'classnames';
 
 export const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(true);
   const [edcOpen, setEdcOpen] = useState(true);
   const [systemOpen, setSystemOpen] = useState(true);
   const location = useLocation();
@@ -25,6 +27,12 @@ export const Sidebar: React.FC = () => {
 
   const navItems = [
     { path: '/index', icon: <LayoutDashboard size={20} />, label: 'Dashboard 仪表盘' },
+  ];
+
+  const archiveItems = [
+    { path: '/index/archive/list', label: '档案列表' },
+    { path: '/index/archive/appointments', label: '预约管理' },
+    { path: '/index/archive/tags', label: '标签管理' },
   ];
 
   const edcItems = [
@@ -40,6 +48,7 @@ export const Sidebar: React.FC = () => {
     { path: '/index/system/logs', label: '日志管理' },
   ];
 
+  const archiveActive = archiveItems.some(i => isPathActive(i.path)) || isPathActive('/index/archive');
   const edcActive = edcItems.some(i => isPathActive(i.path));
   const systemActive = systemItems.some(i => isPathActive(i.path));
 
@@ -76,6 +85,50 @@ export const Sidebar: React.FC = () => {
             {!collapsed && <span className="ml-3 origin-left">{item.label}</span>}
           </NavLink>
         ))}
+
+        <div className="space-y-1">
+          <button
+            onClick={() => setArchiveOpen(!archiveOpen)}
+            className={classNames(
+              "w-full flex items-center px-4 py-3 rounded-xl transition-all group font-medium whitespace-nowrap overflow-hidden hover:bg-slate-50 hover:text-brand-600",
+              archiveActive ? "text-brand-600" : "text-slate-600"
+            )}
+          >
+            <span
+              className={classNames(
+                "flex-shrink-0",
+                archiveActive ? "text-brand-600" : "text-slate-400 group-hover:text-brand-500"
+              )}
+            >
+              <FolderKanban size={20} />
+            </span>
+            {!collapsed && (
+              <>
+                <span className="ml-3 flex-1 text-left">档案管理</span>
+                <span className={classNames("transition-transform duration-300", archiveOpen ? "rotate-180" : "")}>
+                  <ChevronDown size={16} />
+                </span>
+              </>
+            )}
+          </button>
+
+          {archiveOpen && !collapsed && (
+            <div className="space-y-1">
+              {archiveItems.map(item => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className={({ isActive }) => classNames(
+                    "flex items-center py-3 pr-4 pl-12 rounded-xl transition-all group font-medium whitespace-nowrap overflow-hidden",
+                    isActive ? "bg-brand-50 text-brand-600" : "text-slate-600 hover:bg-slate-50 hover:text-brand-600"
+                  )}
+                >
+                  <span>{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="space-y-1">
           <button
