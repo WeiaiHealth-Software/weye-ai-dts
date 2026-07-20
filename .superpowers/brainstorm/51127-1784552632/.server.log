@@ -1,3 +1,4 @@
 {"type":"server-started","port":64598,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:64598","screen_dir":"/Users/luffyzh/luffyzh/github/weiai-healthcare/weye-ai-dts/.superpowers/brainstorm/51127-1784552632"}
 {"type":"screen-added","file":"/Users/luffyzh/luffyzh/github/weiai-healthcare/weye-ai-dts/.superpowers/brainstorm/51127-1784552632/logs-layout-options.html"}
 {"type":"screen-added","file":"/Users/luffyzh/luffyzh/github/weiai-healthcare/weye-ai-dts/.superpowers/brainstorm/51127-1784552632/logs-layout-c-drawer.html"}
+{"type":"server-stopped","reason":"idle timeout"}

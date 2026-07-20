@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { ArchivePlaceholderPage } from '@/pages/archive/components/ArchivePlaceholderPage'
+import { TagManagementContent } from '@/modules/archive'
 import { useHeaderStore } from '@/store/useHeaderStore'
 
 export function ArchiveTagsPage() {
@@ -13,10 +13,8 @@ export function ArchiveTagsPage() {
   }, [setTitle])
 
   return (
-    <ArchivePlaceholderPage
-      title="标签管理"
-      description="当前先保留菜单与页面骨架，后续可继续接入标签字典、患者标签分组、规则维护和标签命中统计。"
-      actionLabel="标签管理"
-    />
+    <div className="archive-extract-root p-6">
+      <TagManagementContent />
+    </div>
   )
 }

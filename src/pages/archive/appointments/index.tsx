@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { ArchivePlaceholderPage } from '@/pages/archive/components/ArchivePlaceholderPage'
+import { message } from 'antd'
+import { BookingContent } from '@/modules/archive'
 import { useHeaderStore } from '@/store/useHeaderStore'
 
 export function ArchiveAppointmentPage() {
@@ -13,10 +14,15 @@ export function ArchiveAppointmentPage() {
   }, [setTitle])
 
   return (
-    <ArchivePlaceholderPage
-      title="预约管理"
-      description="当前先完成档案管理模块的菜单和路由占位，这里后续适合接入预约记录表格、状态筛选、到访提醒和批量跟进动作。"
-      actionLabel="预约管理"
-    />
+    <div className="archive-extract-root p-6">
+      <BookingContent
+        onCalendarView={() => message.info('日历视图待后续接入排班看板或月历页面。')}
+        onExport={() => message.info('导出能力待后续对接真实接口或文件导出逻辑。')}
+        onCreateBooking={() => message.info('新增预约入口待后续接入预约创建流程。')}
+        onReschedule={() => message.info('改期能力待后续接入预约编辑流程。')}
+        onCancelBooking={() => message.info('取消预约能力待后续接入真实业务逻辑。')}
+        onCheckIn={() => message.info('到诊录入能力待后续接入到诊登记流程。')}
+      />
+    </div>
   )
 }
