@@ -14,6 +14,7 @@ export function MiniProgram() {
   const [currentView, setCurrentView] = useState<'main' | 'profile'>('main');
   const [activeTab, setActiveTab] = useState<MainTab>('问诊');
   const [inputText, setInputText] = useState('');
+  const [agentDetailOpen, setAgentDetailOpen] = useState(false);
 
   const renderActiveModule = () => {
     switch (activeTab) {
@@ -24,7 +25,7 @@ export function MiniProgram() {
       case '工具':
         return <ToolsModule />;
       case '智能体':
-        return <AgentsModule />;
+        return <AgentsModule onDetailVisibilityChange={setAgentDetailOpen} />;
       default:
         return null;
     }
@@ -55,20 +56,27 @@ export function MiniProgram() {
               </div>
             </div>
 
-            <div className="relative z-10 flex items-center justify-between px-6 pb-2 pt-2">
-              {TABS.map((tab) => (
-                <div
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`relative cursor-pointer pb-1.5 text-base transition-all duration-300 ${
-                    activeTab === tab ? 'text-lg font-bold text-gray-900' : 'font-medium text-gray-500'
-                  }`}
-                >
-                  {tab}
-                  {activeTab === tab && <div className="absolute bottom-0 left-1/2 h-1 w-5 -translate-x-1/2 rounded-full bg-blue-500" />}
-                </div>
-              ))}
-            </div>
+            {!(activeTab === '智能体' && agentDetailOpen) ? (
+              <div className="relative z-10 flex items-center justify-between px-6 pb-2 pt-2">
+                {TABS.map((tab) => (
+                  <div
+                    key={tab}
+                    onClick={() => {
+                      setActiveTab(tab);
+                      if (tab !== '智能体') {
+                        setAgentDetailOpen(false);
+                      }
+                    }}
+                    className={`relative cursor-pointer pb-1.5 text-base transition-all duration-300 ${
+                      activeTab === tab ? 'text-lg font-bold text-gray-900' : 'font-medium text-gray-500'
+                    }`}
+                  >
+                    {tab}
+                    {activeTab === tab && <div className="absolute bottom-0 left-1/2 h-1 w-5 -translate-x-1/2 rounded-full bg-blue-500" />}
+                  </div>
+                ))}
+              </div>
+            ) : null}
 
             <div className="relative z-10 flex-1 overflow-hidden">
               <div className="no-scrollbar h-full overflow-y-auto">{renderActiveModule()}</div>

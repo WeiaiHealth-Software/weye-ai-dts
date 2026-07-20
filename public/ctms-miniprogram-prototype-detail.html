@@ -27,9 +27,9 @@
             border-color: #e5e7eb;
             z-index: 10;
         }
-        .folder-tab.active-edc {
+        .folder-tab.active-followup {
             background-color: white;
-            color: #10b981; /* EDC 绿色 */
+            color: #10b981; /* Follow-up 绿色 */
             border-color: #e5e7eb;
             z-index: 10;
         }
@@ -112,8 +112,8 @@
             <div class="folder-tab active-iwrs" id="tab-iwrs" onclick="switchModule('iwrs')">
                 IWRS 随机化
             </div>
-            <div class="folder-tab inactive" id="tab-edc" onclick="switchModule('edc')">
-                EDC 数据采集
+            <div class="folder-tab inactive" id="tab-followup" onclick="switchModule('followup')">
+                随访管理
             </div>
         </div>
 
@@ -440,8 +440,8 @@
                 </div>
             </div>
 
-            <!-- ================= EDC 内容模块 ================= -->
-            <div id="content-edc" class="hidden">
+            <!-- ================= 随访内容模块 ================= -->
+            <div id="content-followup" class="hidden">
                  <!-- 进度条 -->
                  <div class="mb-5">
                     <div class="flex justify-between text-sm mb-1.5">
@@ -522,21 +522,21 @@
     <script>
         function switchModule(module) {
             const tabIwrs = document.getElementById('tab-iwrs');
-            const tabEdc = document.getElementById('tab-edc');
+            const tabFollowup = document.getElementById('tab-followup');
             const contentIwrs = document.getElementById('content-iwrs');
-            const contentEdc = document.getElementById('content-edc');
+            const contentFollowup = document.getElementById('content-followup');
 
             if (module === 'iwrs') {
                 tabIwrs.className = 'folder-tab active-iwrs';
-                tabEdc.className = 'folder-tab inactive';
+                tabFollowup.className = 'folder-tab inactive';
                 
                 contentIwrs.className = 'block';
-                contentEdc.className = 'hidden';
-            } else if (module === 'edc') {
-                tabEdc.className = 'folder-tab active-edc';
+                contentFollowup.className = 'hidden';
+            } else if (module === 'followup') {
+                tabFollowup.className = 'folder-tab active-followup';
                 tabIwrs.className = 'folder-tab inactive';
                 
-                contentEdc.className = 'block';
+                contentFollowup.className = 'block';
                 contentIwrs.className = 'hidden';
             }
         }

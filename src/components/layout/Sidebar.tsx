@@ -9,7 +9,6 @@ import {
   FolderKanban,
   PanelLeftClose,
   PanelLeftOpen,
-  ClipboardList,
   ChartNoAxesGantt
 } from 'lucide-react';
 import classNames from 'classnames';
@@ -17,7 +16,6 @@ import classNames from 'classnames';
 export const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [archiveOpen, setArchiveOpen] = useState(true);
-  const [edcOpen, setEdcOpen] = useState(true);
   const [systemOpen, setSystemOpen] = useState(true);
   const location = useLocation();
 
@@ -35,12 +33,6 @@ export const Sidebar: React.FC = () => {
     { path: '/index/archive/tags', label: '标签管理' },
   ];
 
-  const edcItems = [
-    { path: '/index/edc/projects', label: '项目管理' },
-    { path: '/index/edc/appointments', label: '预约复查管理' },
-    { path: '/index/edc/templates', label: '表单样板间' },
-  ];
-
   const systemItems = [
     { path: '/index/centers', label: '中心管理' },
     { path: '/index/roles', label: '角色管理' },
@@ -49,7 +41,6 @@ export const Sidebar: React.FC = () => {
   ];
 
   const archiveActive = archiveItems.some(i => isPathActive(i.path)) || isPathActive('/index/archive');
-  const edcActive = edcItems.some(i => isPathActive(i.path));
   const systemActive = systemItems.some(i => isPathActive(i.path));
 
   return (
@@ -115,50 +106,6 @@ export const Sidebar: React.FC = () => {
           {archiveOpen && !collapsed && (
             <div className="space-y-1">
               {archiveItems.map(item => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) => classNames(
-                    "flex items-center py-3 pr-4 pl-12 rounded-xl transition-all group font-medium whitespace-nowrap overflow-hidden",
-                    isActive ? "bg-brand-50 text-brand-600" : "text-slate-600 hover:bg-slate-50 hover:text-brand-600"
-                  )}
-                >
-                  <span>{item.label}</span>
-                </NavLink>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-1">
-          <button
-            onClick={() => setEdcOpen(!edcOpen)}
-            className={classNames(
-              "w-full flex items-center px-4 py-3 rounded-xl transition-all group font-medium whitespace-nowrap overflow-hidden hover:bg-slate-50 hover:text-brand-600",
-              edcActive ? "text-brand-600" : "text-slate-600"
-            )}
-          >
-            <span
-              className={classNames(
-                "flex-shrink-0",
-                edcActive ? "text-brand-600" : "text-slate-400 group-hover:text-brand-500"
-              )}
-            >
-              <ClipboardList size={20} />
-            </span>
-            {!collapsed && (
-              <>
-                <span className="ml-3 flex-1 text-left">EDC 电子数据采集</span>
-                <span className={classNames("transition-transform duration-300", edcOpen ? "rotate-180" : "")}>
-                  <ChevronDown size={16} />
-                </span>
-              </>
-            )}
-          </button>
-          
-          {edcOpen && !collapsed && (
-            <div className="space-y-1">
-              {edcItems.map(item => (
                 <NavLink
                   key={item.path}
                   to={item.path}

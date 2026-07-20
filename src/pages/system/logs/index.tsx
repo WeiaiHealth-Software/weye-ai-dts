@@ -72,7 +72,7 @@ export const SystemLogs: React.FC = () => {
       module: '任务调度',
       operator: 'system',
       ip: '127.0.0.1',
-      content: '定时任务执行：数据归档（EDC）',
+      content: '定时任务执行：夜间数据归档',
       result: '成功'
     },
     {

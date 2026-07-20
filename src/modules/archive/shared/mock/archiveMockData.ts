@@ -154,6 +154,26 @@ export type VisitExamRow = {
   type?: "boolean";
 };
 
+export type VisitOptometryMetric = {
+  value: string;
+  delta?: string;
+  trend?: "up" | "down" | "flat";
+};
+
+export type VisitOptometryEye = {
+  axialLength: VisitOptometryMetric;
+  sphere: VisitOptometryMetric;
+  cylinder: VisitOptometryMetric;
+  keratometry: string;
+};
+
+export type VisitOptometryExam = {
+  date: string;
+  optometrist: string;
+  right: VisitOptometryEye;
+  left: VisitOptometryEye;
+};
+
 export type VisitDetailRecord = {
   basicInfo: { doctor: string; optometrist: string };
   chiefHistory: {
@@ -163,6 +183,7 @@ export type VisitDetailRecord = {
     durationUnit: string;
     description: string;
   };
+  optometryExam: VisitOptometryExam;
   eyeExam: VisitExamRow[];
   auxExam: VisitExamRow[];
   diagnosis: string;
@@ -269,7 +290,7 @@ export const patients: Patient[] = [
     gender: "女",
     age: 12,
     mobile: "138 1712 0291",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     owner: "王懿雯",
     latestVisit: "2026-05-01 10:20",
     nextReview: "2026-06-01",
@@ -337,7 +358,7 @@ export const patients: Patient[] = [
     gender: "女",
     age: 11,
     mobile: "137 2031 4489",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     owner: "王懿雯",
     latestVisit: "2026-04-18 11:05",
     nextReview: "2026-05-18",
@@ -426,7 +447,7 @@ export const patients: Patient[] = [
     gender: "女",
     age: 15,
     mobile: "136 9021 3370",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     owner: "王懿雯",
     latestVisit: "2026-04-02 10:05",
     nextReview: "2026-05-02",
@@ -472,7 +493,7 @@ export const patients: Patient[] = [
     gender: "男",
     age: 12,
     mobile: "139 7833 0422",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     owner: "王懿雯",
     latestVisit: "2026-04-15 09:50",
     nextReview: "2026-05-15",
@@ -540,7 +561,7 @@ export const patients: Patient[] = [
     gender: "男",
     age: 9,
     mobile: "136 1177 0933",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     owner: "王懿雯",
     latestVisit: "2026-04-21 15:25",
     nextReview: "2026-05-21",
@@ -609,7 +630,7 @@ export const patients: Patient[] = [
     gender: "男",
     age: 14,
     mobile: "135 9088 2704",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     owner: "王懿雯",
     latestVisit: "2026-04-29 18:05",
     nextReview: "2026-05-29",
@@ -677,7 +698,7 @@ export const appointments: Appointment[] = [
     patient: "周沐言",
     time: "09:00-09:30",
     date: "2026-05-12",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     room: "2号诊室",
     source: "小程序预约",
     issue: "复查视力变化",
@@ -750,7 +771,7 @@ export const trainingRecords: TrainingRecord[] = [
     patient: "周沐言",
     trainingTime: "2026-05-01 11:20",
     trainer: "苏雨晴",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     note: "完成双眼调节训练，状态稳定。",
     project: "调节灵敏度训练",
     duration: "20",
@@ -761,7 +782,7 @@ export const trainingRecords: TrainingRecord[] = [
     patient: "周沐言",
     trainingTime: "2026-03-28 10:40",
     trainer: "苏雨晴",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     note: "家长配合度较高，建议继续保持家庭训练。",
     project: "集合训练",
     duration: "25",
@@ -772,7 +793,7 @@ export const trainingRecords: TrainingRecord[] = [
     patient: "赵一宁",
     trainingTime: "2026-04-18 11:50",
     trainer: "李嘉怡",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     note: "首训完成，后续需观察依从性。",
     project: "视疲劳舒缓训练",
     duration: "15",
@@ -796,7 +817,7 @@ export const historyVisits: Visit[] = [
     id: "v1",
     date: "2026-05-01",
     personType: "复诊",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     diagnosis: "青少年近视进展期",
     treatment: "离焦镜片 + 视觉训练",
     axial: "24.22mm",
@@ -809,7 +830,7 @@ export const historyVisits: Visit[] = [
     id: "v2",
     date: "2026-03-28",
     personType: "复诊",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     diagnosis: "近视控制中",
     treatment: "离焦镜片",
     axial: "24.17mm",
@@ -822,7 +843,7 @@ export const historyVisits: Visit[] = [
     id: "v3",
     date: "2026-02-14",
     personType: "初诊",
-    store: "惟爱 · 上海海华医院",
+    store: "上海眼病防治中心",
     diagnosis: "青少年近视",
     treatment: "离焦镜片评估",
     axial: "24.05mm",
@@ -835,7 +856,7 @@ export const historyVisits: Visit[] = [
 
 export const visitDetailRecords: Record<string, VisitDetailRecord> = {
   v1: {
-    basicInfo: { doctor: "吴丽颖", optometrist: "/" },
+    basicInfo: { doctor: "吴丽颖", optometrist: "吴丽颖" },
     chiefHistory: {
       eye: "双眼",
       symptom: "视力下降",
@@ -843,6 +864,22 @@ export const visitDetailRecords: Record<string, VisitDetailRecord> = {
       durationUnit: "日",
       description:
         "双眼OK镜复诊，戴镜1月。日前光学矫正(OK镜)治疗，无眼红、眼痛等不适主诉。脱镜无明显畏光，目前视力好。既往史：否认“高血压病、糖尿病、心脏病”等慢性病史；否认“病毒性肝炎、结核病、伤寒、疟疾”等急慢性传染病史；无肝、肾等重要脏器疾病史，否认新型冠状病毒肺炎流行病学史；否认头痛、发热、呼吸道症状病史。",
+    },
+    optometryExam: {
+      date: "2026-05-01",
+      optometrist: "吴丽颖",
+      right: {
+        axialLength: { value: "25.36 mm", delta: "↑0.22", trend: "up" },
+        sphere: { value: "-3.50 D" },
+        cylinder: { value: "-0.75 D" },
+        keratometry: "42.50 / 43.25",
+      },
+      left: {
+        axialLength: { value: "25.54 mm", delta: "↑0.03", trend: "up" },
+        sphere: { value: "-4.00 D" },
+        cylinder: { value: "-0.50 D" },
+        keratometry: "42.75 / 43.50",
+      },
     },
     eyeExam: [
       { label: "眼位", right: "位正", left: "位正" },
@@ -886,13 +923,29 @@ export const visitDetailRecords: Record<string, VisitDetailRecord> = {
     },
   },
   v2: {
-    basicInfo: { doctor: "吴丽颖", optometrist: "/" },
+    basicInfo: { doctor: "吴丽颖", optometrist: "王欣然" },
     chiefHistory: {
       eye: "双眼",
       symptom: "复诊随访",
       duration: "3",
       durationUnit: "月",
       description: "离焦镜片复诊，配戴适应良好，家长反馈依从性高，无明显眼部不适。",
+    },
+    optometryExam: {
+      date: "2026-03-28",
+      optometrist: "王欣然",
+      right: {
+        axialLength: { value: "24.98 mm", delta: "↑0.08", trend: "up" },
+        sphere: { value: "-3.25 D" },
+        cylinder: { value: "-0.75 D" },
+        keratometry: "42.10 / 42.85",
+      },
+      left: {
+        axialLength: { value: "25.11 mm", delta: "↑0.06", trend: "up" },
+        sphere: { value: "-3.75 D" },
+        cylinder: { value: "-1.00 D" },
+        keratometry: "42.35 / 43.10",
+      },
     },
     eyeExam: [
       { label: "眼位", right: "位正", left: "位正" },
@@ -936,13 +989,29 @@ export const visitDetailRecords: Record<string, VisitDetailRecord> = {
     },
   },
   v3: {
-    basicInfo: { doctor: "吴丽颖", optometrist: "/" },
+    basicInfo: { doctor: "吴丽颖", optometrist: "陈雨桐" },
     chiefHistory: {
       eye: "双眼",
       symptom: "首诊评估",
       duration: "6",
       durationUnit: "月",
       description: "首诊完成基础屈光与近视防控评估，拟进入离焦镜片干预方案。",
+    },
+    optometryExam: {
+      date: "2026-02-14",
+      optometrist: "陈雨桐",
+      right: {
+        axialLength: { value: "24.05 mm", delta: "↑0.05", trend: "up" },
+        sphere: { value: "-2.75 D" },
+        cylinder: { value: "-0.50 D" },
+        keratometry: "41.95 / 42.60",
+      },
+      left: {
+        axialLength: { value: "24.18 mm", delta: "↑0.04", trend: "up" },
+        sphere: { value: "-3.00 D" },
+        cylinder: { value: "-0.75 D" },
+        keratometry: "42.15 / 42.92",
+      },
     },
     eyeExam: [
       { label: "眼位", right: "位正", left: "位正" },

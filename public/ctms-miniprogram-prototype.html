@@ -139,7 +139,7 @@
         <div class="flex-1 bg-emerald-50 rounded-xl p-3 border border-emerald-100">
           <div class="flex items-center gap-2 mb-1">
             <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-            <span class="text-xs font-bold text-emerald-700">EDC 系统</span>
+            <span class="text-xs font-bold text-emerald-700">随访管理</span>
           </div>
           <div class="text-xs text-emerald-600">12 待录入 · 4 质疑</div>
         </div>
@@ -190,7 +190,7 @@
           <button class="w-full py-2.5 bg-blue-600 text-white text-sm font-bold rounded-lg shadow-sm hover:bg-blue-700 transition">立即执行</button>
         </div>
 
-        <!-- EDC 任务卡片 (Emerald) -->
+        <!-- 随访任务卡片 (Emerald) -->
         <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm relative overflow-hidden">
           <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
           <div class="flex justify-between items-start mb-2">
@@ -198,7 +198,7 @@
               <div class="w-6 h-6 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
               </div>
-              <span class="text-xs font-bold text-emerald-700">EDC - 数据录入</span>
+              <span class="text-xs font-bold text-emerald-700">随访 - 访视录入</span>
             </div>
             <span class="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded">中优先级</span>
           </div>
@@ -227,7 +227,7 @@
           <p class="text-xs text-gray-500">前置任务：需等待该受试者 V1 访视数据提交</p>
         </div>
 
-        <!-- EDC 任务卡片 (Emerald) -->
+        <!-- 质控任务卡片 (Emerald) -->
         <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm relative overflow-hidden">
           <div class="absolute top-0 left-0 w-1 h-full bg-emerald-300"></div>
           <div class="flex justify-between items-start mb-2">
@@ -235,7 +235,7 @@
               <div class="w-6 h-6 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
               </div>
-              <span class="text-xs font-bold text-emerald-700">EDC - 质疑回复</span>
+              <span class="text-xs font-bold text-emerald-700">质控 - 问题回复</span>
             </div>
             <span class="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">低优先级</span>
           </div>
@@ -268,7 +268,7 @@
       </div>
 
       <div class="space-y-3">
-        <!-- EDC 异常数据卡片 (Emerald) -->
+        <!-- 临床预警卡片 (Emerald) -->
         <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm relative overflow-hidden">
           <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
           <div class="flex justify-between items-start mb-2">
@@ -276,7 +276,7 @@
               <div class="w-6 h-6 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
               </div>
-              <span class="text-xs font-bold text-emerald-700">EDC - 数据异常确认</span>
+              <span class="text-xs font-bold text-emerald-700">临床 - 异常数据确认</span>
             </div>
             <span class="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded">高优先级</span>
           </div>
@@ -320,12 +320,12 @@
     </div>
     
     <div class="px-5 mt-4 space-y-4">
-      <!-- Project Card 1 (IWRS + EDC) -->
+      <!-- Project Card 1 (IWRS + 随访) -->
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow" onclick="switchView('view-project-detail')">
         <div class="flex justify-between items-start mb-3">
           <div class="flex gap-1.5">
             <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-bold rounded">IWRS</span>
-            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded">EDC</span>
+            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded">随访</span>
           </div>
           <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] rounded-full">进行中</span>
         </div>

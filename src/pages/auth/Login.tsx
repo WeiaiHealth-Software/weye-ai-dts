@@ -5,8 +5,8 @@ import { setAuthed } from "../../lib/auth";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [account, setAccount] = useState("");
-  const [password, setPassword] = useState("");
+  const [account, setAccount] = useState("admin");
+  const [password, setPassword] = useState("123456");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
@@ -21,13 +21,9 @@ export default function Login() {
 
           <div className="relative z-10 flex w-full flex-col p-4">
             <div className="flex items-center gap-3 text-white">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-white shadow-sm">
-                <svg viewBox="0 0 1024 1024" fill="currentColor" className="h-6 w-6">
-                  <path d="M512.047072 64.62588c-246.254543 0-445.883163 199.62862-445.883163 445.883163s199.62862 445.883163 445.883163 445.883163 445.883163-199.62862 445.883163-445.883163S758.301616 64.62588 512.047072 64.62588zM641.561821 743.301993 368.898815 743.301993c-119.712499-34.183544-77.214593-200.275349-77.214593-200.275349 26.542516 67.160609 86.865393 67.354014 86.865393 67.354014l258.052241 2.412956c74.93569-8.55791 103.890138-72.179926 103.890138-72.178903C777.789459 754.964614 641.561821 743.301993 641.561821 743.301993zM690.974207 538.254967c-67.562768-0.00614-91.692329-82.09474-91.692329-82.09474s0.343831 80.419588-86.119403 82.013899l0 0.070608c-0.384763 0-0.73678-0.030699-1.11745-0.034792-0.381693 0.004093-0.732687 0.033769-1.11745 0.034792l0-0.070608c-86.462211-1.593288-86.119403-82.013899-86.119403-82.013899s-24.12956 82.0886-91.692329 82.09474c-103.756085 0.00921-82.039481-84.506672-82.039481-84.506672l16.987906-120.937396c0 0 2.338255-47.591925 36.097126-55.207369L510.930645 277.603529l2.232854 0 206.765157 0c33.759895 7.615445 36.097126 55.207369 36.097126 55.207369l16.987906 120.937396C773.014712 453.748295 794.730293 538.263154 690.974207 538.254967z"></path>
-                </svg>
-              </div>
+              <svg className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5362" width="32" height="32"><path d="M512 254.7c-188.2 0-332.1 119.7-512 313.5 155 165.3 282.3 313.5 512 313.5s395.8-188.1 512-310.6c-119-142.5-285.1-316.4-512-316.4m0 521.5c-113.5 0-204.8-94-204.8-208s91.3-208 204.8-208 204.8 94 204.8 208-91.4 208-204.8 208m0-330.5c-66.4 0-119 54.1-119 122.5s52.6 122.5 119 122.5 119-54.1 119-122.5-52.6-122.5-119-122.5" fill="#ffffff" p-id="5363"></path><path d="M560.5 169.7v111.8c0 15.4-13.2 28-29.3 28-16.2 0-29.3-12.6-29.3-28V169.7c0-15.4 13.2-28 29.3-28s29.3 12.5 29.3 28zM165.8 276.1l75.3 85.5c10.4 11.6 8.7 29.4-3.7 39.4-12.4 10-30.8 8.3-41.2-3.6l-75.2-85.5c-10.4-11.6-8.7-29.5 3.7-39.4 5.5-4.3 12.2-6.4 18.9-6.4 8.1 0 16.5 3.3 22.2 10z m772.9-3.3c12.4 10 13.9 27.5 3.7 39.4l-75.2 85.5c-10.2 11.9-28.8 13.3-41.2 3.6-12.4-10-13.9-27.5-3.7-39.4l75.2-85.5c5.7-6.9 13.9-10.2 22.4-10.2 6.7-0.1 13.4 2 18.8 6.6z" fill="#ffffff" p-id="5364"></path></svg>
               <div className="min-w-0">
-                <div className="text-2xl font-bold tracking-tight">惟爱 · 门店管理系统</div>
+                <div className="text-2xl font-bold tracking-tight">眼视光智慧诊疗平台</div>
               </div>
             </div>
 
@@ -50,7 +46,7 @@ export default function Login() {
                       {[
                         { label: "客户档案", value: "3,482" },
                         { label: "待回访", value: "142" },
-                        { label: "本月营收", value: "¥ 50,901" },
+                        { label: "角膜塑形镜复查", value: "216" },
                       ].map((item) => (
                         <div key={item.label} className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
                           <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{item.label}</div>
@@ -86,7 +82,7 @@ export default function Login() {
         <div className="flex items-center justify-center rounded-[28px] bg-[#f3f4f6] px-6 py-14">
           <div className="w-full max-w-[420px] rounded-[28px] border border-gray-200 bg-white px-8 py-10 shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
             <div className="text-2xl font-bold tracking-tight text-gray-900">欢迎回来</div>
-            <div className="mt-2 text-sm text-gray-500">请输入门店账号与密码登录系统。</div>
+            <div className="mt-2 text-sm text-gray-500">请输入机构/医生账号与密码登录系统。</div>
 
             <form
               className="mt-8 space-y-4"

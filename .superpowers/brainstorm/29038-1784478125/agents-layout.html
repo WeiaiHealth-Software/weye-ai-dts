@@ -1,0 +1,144 @@
+<h2>小程序智能体页优化方案</h2>
+<p class="subtitle">推荐方案：列表态更紧凑，详情态真正全屏，并沿用问诊首页的浅蓝系氛围。</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">A. 智能体列表页</div>
+    <div class="mockup-body">
+      <div style="width: 320px; margin: 0 auto; border-radius: 34px; overflow: hidden; background: linear-gradient(180deg, #eef4ff 0%, #f8fbff 100%); box-shadow: 0 20px 40px rgba(72, 97, 160, 0.14);">
+        <div style="padding: 18px 18px 12px; border-bottom: 1px solid rgba(160, 176, 214, 0.2);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <div style="width:42px; height:42px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; color:#4f7fff; box-shadow:0 8px 18px rgba(111,132,196,0.12);">◌</div>
+            <div style="display:flex; gap:10px; align-items:center; padding:10px 14px; border-radius:999px; background:rgba(255,255,255,0.78); color:#3f4f73;">··· ○</div>
+          </div>
+          <div style="display:flex; justify-content:space-between; color:#6c7896; font-size:13px; font-weight:600;">
+            <span>问诊</span>
+            <span>档案</span>
+            <span>工具</span>
+            <span style="color:#1e2b4d; position:relative;">智能体<div style="position:absolute; left:50%; bottom:-8px; transform:translateX(-50%); width:26px; height:4px; background:#4f7fff; border-radius:999px;"></div></span>
+          </div>
+        </div>
+
+        <div style="padding:16px 16px 8px;">
+          <div style="height:44px; border-radius:999px; background:#fff; display:flex; align-items:center; padding:0 16px; color:#a3aec8; box-shadow:0 6px 14px rgba(110,128,175,0.08);">🔍 搜索眼科专家/服务</div>
+        </div>
+
+        <div style="display:flex; gap:18px; padding:10px 16px 14px; font-size:14px; white-space:nowrap; overflow:hidden;">
+          <span style="color:#3478ff; font-weight:700; border-bottom:3px solid #3478ff; padding-bottom:6px;">全部名医</span>
+          <span style="color:#7a879f;">近视防控</span>
+          <span style="color:#7a879f;">斜弱视专区</span>
+          <span style="color:#7a879f;">角膜塑形镜</span>
+        </div>
+
+        <div style="padding:0 16px 18px; display:grid; gap:14px;">
+          <div style="border-radius:22px; background:#fff; padding:16px; box-shadow:0 10px 24px rgba(102,121,171,0.08);">
+            <div style="display:flex; gap:12px;">
+              <div style="position:relative; width:52px; height:52px; border-radius:50%; background:#dfeafe; flex:none;"></div>
+              <div style="flex:1; min-width:0;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                  <strong style="font-size:17px; color:#18233d;">徐蔚 教授</strong>
+                  <span style="padding:4px 8px; border-radius:10px; background:#edf4ff; color:#4f7fff; font-size:12px;">眼视光领域</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px; color:#7f8ba5; font-size:12px; margin-bottom:8px;">
+                  <span style="padding:2px 6px; border-radius:8px; background:#f2f5fb;">三甲</span>
+                  <span>上海市眼病防治中心 视光中心</span>
+                </div>
+                <div style="font-size:13px; line-height:1.65; color:#5d6985;">整卡可点，不再单独放右侧按钮，内容区恢复完整宽度，医生介绍更舒展。</div>
+                <div style="margin-top:8px; font-size:12px; color:#9aa4ba;">◷ 12.5 万人咨询</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="border-radius:22px; background:#fff; padding:16px; box-shadow:0 10px 24px rgba(102,121,171,0.08);">
+            <div style="display:flex; gap:12px;">
+              <div style="position:relative; width:52px; height:52px; border-radius:50%; background:#daf6ee; flex:none;"></div>
+              <div style="flex:1; min-width:0;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                  <strong style="font-size:17px; color:#18233d;">林若宁 主任</strong>
+                  <span style="padding:4px 8px; border-radius:10px; background:#e8fbf5; color:#18a67f; font-size:12px;">斜弱视专区</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px; color:#7f8ba5; font-size:12px; margin-bottom:8px;">
+                  <span style="padding:2px 6px; border-radius:8px; background:#f2f5fb;">三甲</span>
+                  <span>首都医科大学附属北京同仁医院</span>
+                </div>
+                <div style="font-size:13px; line-height:1.65; color:#5d6985;">各分类都可点击切换筛选，每个分类下都有对应医生，不会出现空白。</div>
+                <div style="margin-top:8px; font-size:12px; color:#9aa4ba;">◷ 9.8 万人咨询</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">B. 医生 AI 分身页</div>
+    <div class="mockup-body">
+      <div style="width: 320px; margin: 0 auto; border-radius: 34px; overflow: hidden; background: linear-gradient(180deg, #eaf2ff 0%, #f7fbff 42%, #f9fbff 100%); box-shadow: 0 20px 40px rgba(72, 97, 160, 0.14); min-height: 640px;">
+        <div style="position:relative; padding:18px 18px 94px; background: linear-gradient(180deg, #7fb3ff 0%, #5d8df2 38%, #7d9dff 100%);">
+          <div style="position:absolute; inset:0; background: radial-gradient(circle at 18% 20%, rgba(255,255,255,0.24), transparent 28%), radial-gradient(circle at 80% 10%, rgba(255,255,255,0.18), transparent 24%), radial-gradient(circle at 50% 78%, rgba(255,255,255,0.14), transparent 34%);"></div>
+          <div style="position:relative; display:flex; justify-content:space-between; color:#fff;">
+            <span style="width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.16);">←</span>
+            <span style="padding:10px 14px; border-radius:999px; background:rgba(255,255,255,0.16);">⌘ ···</span>
+          </div>
+          <div style="position:relative; margin-top:24px; color:#fff;">
+            <div style="display:inline-flex; padding:6px 12px; border-radius:999px; background:rgba(255,255,255,0.14); font-size:12px;">✣ 医生 AI 分身</div>
+            <div style="margin-top:16px; font-size:32px; font-weight:800; letter-spacing:-0.02em;">徐蔚安心智能体</div>
+            <div style="margin-top:10px; font-size:15px; color:rgba(255,255,255,0.88);">近视防控专家 · 医生AI分身</div>
+          </div>
+          <div style="position:absolute; left:50%; bottom:-44px; transform:translateX(-50%); width:88px; height:88px; border-radius:50%; background:#dbeafe; border:5px solid rgba(255,255,255,0.92); display:flex; align-items:center; justify-content:center; font-size:38px; color:#3478ff;">徐</div>
+        </div>
+
+        <div style="padding:58px 14px 22px;">
+          <div style="border-radius:28px; background:rgba(255,255,255,0.76); backdrop-filter: blur(16px); padding:18px 18px 20px; box-shadow:0 14px 32px rgba(104,125,178,0.12);">
+            <div style="display:flex; justify-content:space-between; gap:14px;">
+              <div>
+                <div style="font-size:26px; font-weight:800; color:#17233d;">徐蔚 教授</div>
+                <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                  <span style="padding:5px 10px; border-radius:999px; background:#203a8d; color:#fff; font-size:12px;">专家团队</span>
+                  <span style="padding:5px 10px; border-radius:999px; background:#edf4ff; color:#4f7fff; font-size:12px;">眼视光领域</span>
+                  <span style="padding:5px 10px; border-radius:999px; background:#f2f5fb; color:#7a879f; font-size:12px;">三甲</span>
+                  <span style="padding:5px 10px; border-radius:999px; background:#eef2ff; color:#6d5efc; font-size:12px;">AI分身</span>
+                </div>
+              </div>
+              <div style="height:42px; padding:0 18px; border-radius:999px; background:#fff; color:#55637f; display:flex; align-items:center; box-shadow:0 10px 20px rgba(115,129,166,0.1); font-weight:700;">关注</div>
+            </div>
+
+            <div style="margin-top:14px; color:#7d88a1; font-size:14px;">上海市眼病防治中心 视光中心</div>
+
+            <div style="display:flex; justify-content:space-between; margin-top:18px; padding-bottom:10px; border-bottom:1px solid rgba(160,176,214,0.28);">
+              <span style="position:relative; color:#17233d; font-weight:700;">专业擅长<div style="position:absolute; left:0; right:0; bottom:-11px; height:3px; border-radius:999px; background:#4f7fff;"></div></span>
+              <span style="color:#9aa4ba; font-weight:600;">团队简介</span>
+              <span style="color:#9aa4ba; font-weight:600;">获奖荣誉</span>
+            </div>
+
+            <div style="margin-top:16px; font-size:14px; line-height:1.9; color:#62708d;">进入后隐藏顶部“问诊 / 档案 / 工具 / 智能体”导航，让医生 AI 分身页独占屏幕空间，视觉上更像沉浸式会话首页。</div>
+          </div>
+
+          <div style="margin-top:14px; border-radius:24px; background:rgba(255,255,255,0.7); padding:16px 18px; line-height:1.9; color:#53617d; box-shadow:0 10px 24px rgba(104,125,178,0.08);">
+            我是徐蔚医生 AI 分身，接受了近视防控、斜弱视和角膜塑形镜方向的专业训练，可以帮你解答筛查、复诊与报告问题。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <div class="options">
+    <div class="option" data-choice="recommended" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>推荐方案</h3>
+        <p>整卡点击 + 分类筛选 + 进入详情后隐藏顶部分栏，详情页改为浅蓝问诊系全屏态。</p>
+      </div>
+    </div>
+    <div class="option" data-choice="keep-tabs" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>备选方案</h3>
+        <p>整卡点击 + 分类筛选，但进入详情后仍保留顶部四个分栏，不够沉浸。</p>
+      </div>
+    </div>
+  </div>
+</div>

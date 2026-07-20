@@ -1,6 +1,17 @@
 import clsx from "clsx";
-import { useEffect, useMemo, useState } from "react";
-import { Alarm, ArrowLeft, LockKey, PencilSimple, Phone, Plus, UserCircle } from "@phosphor-icons/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Alarm, ArrowLeft, LockKey, PencilSimple, Phone, Plus } from "@phosphor-icons/react";
+import {
+  Activity,
+  ChevronDown,
+  Cpu,
+  FileText,
+  Layers,
+  Search,
+  Sparkles,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import {
   appointments,
   followups,
@@ -24,6 +35,22 @@ function formatDateOnly(value?: string) {
 const emptyVisitDetail: VisitDetailRecord = {
   basicInfo: { doctor: "", optometrist: "" },
   chiefHistory: { eye: "右眼", symptom: "", duration: "", durationUnit: "", description: "" },
+  optometryExam: {
+    date: "",
+    optometrist: "",
+    right: {
+      axialLength: { value: "" },
+      sphere: { value: "" },
+      cylinder: { value: "" },
+      keratometry: "",
+    },
+    left: {
+      axialLength: { value: "" },
+      sphere: { value: "" },
+      cylinder: { value: "" },
+      keratometry: "",
+    },
+  },
   eyeExam: [],
   auxExam: [],
   diagnosis: "",
@@ -59,6 +86,57 @@ const tabs = [
   { key: "followup", label: "回访记录" },
   { key: "consumption", label: "消费记录" },
 ] as const;
+
+const optometryPanels = [
+  {
+    key: "right",
+    title: "右眼 (OD)",
+    dotClassName: "bg-sky-500",
+    panelClassName: "border-sky-200 bg-sky-50/30",
+  },
+  {
+    key: "left",
+    title: "左眼 (OS)",
+    dotClassName: "bg-violet-500",
+    panelClassName: "border-violet-200 bg-violet-50/30",
+  },
+] as const;
+
+type ArchiveAiMessageRole = "assistant" | "user";
+
+type ArchiveAiMessage = {
+  id: string;
+  role: ArchiveAiMessageRole;
+  content: string;
+  tag?: string;
+  time: string;
+};
+
+type ArchiveAiEngine = "WEyeAI" | "DeepSeek" | "Qwen";
+
+type ArchiveAiQuickAction = {
+  id: string;
+  title: string;
+  description: string;
+  prompt: string;
+  icon: LucideIcon;
+  iconClassName: string;
+};
+
+function createAiMessage(role: ArchiveAiMessageRole, content: string, tag?: string): ArchiveAiMessage {
+  return {
+    id: `${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    role,
+    content,
+    tag,
+    time: new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" }),
+  };
+}
+
+function parseDeltaValue(value?: string) {
+  const matched = String(value ?? "").match(/-?\d+(?:\.\d+)?/);
+  return matched ? Number(matched[0]) : 0;
+}
 
 type TabKey = (typeof tabs)[number]["key"];
 
@@ -132,6 +210,13 @@ export default function ArchiveDetailContent({
   const [savedAt, setSavedAt] = useState(0);
   const [trainingRows, setTrainingRows] = useState(trainingRecords);
   const [selectedTrainingId, setSelectedTrainingId] = useState<string | null>(null);
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const [aiInput, setAiInput] = useState("");
+  const [aiMessages, setAiMessages] = useState<ArchiveAiMessage[]>([]);
+  const [aiEngine, setAiEngine] = useState<ArchiveAiEngine>("WEyeAI");
+  const [aiEngineMenuOpen, setAiEngineMenuOpen] = useState(false);
+  const [aiQuickActionBatch, setAiQuickActionBatch] = useState(0);
+  const aiEngineMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const nextVisitId = combinedVisits[0]?.id ?? "";
@@ -187,9 +272,195 @@ export default function ArchiveDetailContent({
     () => patientTrainingRecords.find((item) => item.id === selectedTrainingId) ?? patientTrainingRecords[0] ?? null,
     [patientTrainingRecords, selectedTrainingId]
   );
+  const optometryExam = effectiveVisitDetail.optometryExam ?? emptyVisitDetail.optometryExam;
+  const rightAxialDelta = parseDeltaValue(optometryExam.right.axialLength.delta);
+  const leftAxialDelta = parseDeltaValue(optometryExam.left.axialLength.delta);
+  const aiClinicalInsights = useMemo(
+    () => ({
+      patientName: patient.name,
+      age: patient.age,
+      diagnosis: effectiveVisitDetail.diagnosis || "待补充",
+      symptom: effectiveVisitDetail.chiefHistory.symptom || "待补充",
+      rightAxialDelta,
+      leftAxialDelta,
+      rightK: optometryExam.right.keratometry || "-",
+      leftK: optometryExam.left.keratometry || "-",
+      advice: effectiveVisitDetail.treatment.advice || "建议持续观察并按期复诊。",
+    }),
+    [effectiveVisitDetail, leftAxialDelta, optometryExam.left.keratometry, optometryExam.right.keratometry, patient.age, patient.name, rightAxialDelta]
+  );
+  const quickActionGroups = useMemo<ArchiveAiQuickAction[][]>(
+    () => [
+      [
+        {
+          id: "axial-trend",
+          title: "分析近三个月眼轴变化趋势",
+          description: "结合当前验光数据识别近视进展风险",
+          prompt: `请分析患者 ${patient.name} 近三个月眼轴变化趋势，并提示风险。`,
+          icon: Activity,
+          iconClassName: "bg-blue-50 text-blue-600",
+        },
+        {
+          id: "cornea-fit",
+          title: "评估当前角膜地形图配适状态",
+          description: "基于曲率与临床表现做配适判断",
+          prompt: `请基于当前角膜曲率与就诊信息，评估患者角膜地形图配适状态。`,
+          icon: Search,
+          iconClassName: "bg-violet-50 text-violet-600",
+        },
+        {
+          id: "followup-summary",
+          title: "自动生成本次随访小结与医嘱",
+          description: "输出可直接复用的随访总结文案",
+          prompt: `请为患者 ${patient.name} 生成本次随访小结与医嘱。`,
+          icon: FileText,
+          iconClassName: "bg-emerald-50 text-emerald-600",
+        },
+      ],
+      [
+        {
+          id: "risk-review",
+          title: "总结当前近视防控风险点",
+          description: "聚焦高风险眼别与执行风险",
+          prompt: `请总结患者 ${patient.name} 当前近视防控风险点，并按优先级排序。`,
+          icon: Sparkles,
+          iconClassName: "bg-amber-50 text-amber-600",
+        },
+        {
+          id: "visit-qa",
+          title: "解释本次就诊关键结论",
+          description: "面向医生快速梳理诊断与观察重点",
+          prompt: `请解释患者 ${patient.name} 本次就诊的关键结论与下一步观察重点。`,
+          icon: Layers,
+          iconClassName: "bg-sky-50 text-sky-600",
+        },
+        {
+          id: "followup-plan",
+          title: "生成下次复诊关注清单",
+          description: "输出复诊时需要重点追踪的指标",
+          prompt: `请为患者 ${patient.name} 生成下次复诊关注清单。`,
+          icon: FileText,
+          iconClassName: "bg-rose-50 text-rose-600",
+        },
+      ],
+    ],
+    [patient.name]
+  );
+  const currentQuickActions = quickActionGroups[aiQuickActionBatch] ?? quickActionGroups[0];
+
+  const initialAiMessage = useMemo(() => {
+    const rightDeltaText = `${rightAxialDelta.toFixed(2)}mm`;
+    const leftDeltaText = `${leftAxialDelta.toFixed(2)}mm`;
+    const riskSentence =
+      rightAxialDelta >= 0.2
+        ? `该患者右眼（OD）近三个月眼轴增长 ${rightDeltaText}，超出当前生理发育预期，近视控制效果欠佳。`
+        : `该患者右眼（OD）近三个月眼轴增长 ${rightDeltaText}，需要持续观察防控效果。`;
+    const leftSentence =
+      leftAxialDelta <= 0.05
+        ? `左眼（OS）控制良好（增长 ${leftDeltaText}）。`
+        : `左眼（OS）当前增长 ${leftDeltaText}，建议继续追踪变化。`;
+
+    return [
+      `我是 Eye宝临床助手。已为您加载患者 ${aiClinicalInsights.patientName} 的全量档案数据。`,
+      "⚠️ 风险提示：",
+      riskSentence,
+      leftSentence,
+      `建议重点复核右眼角膜塑形镜配适情况，并结合当前诊断“${aiClinicalInsights.diagnosis}”与医嘱继续随访。`,
+      `依据：当前角膜曲率 OD ${aiClinicalInsights.rightK}，OS ${aiClinicalInsights.leftK}。`,
+    ].join("\n");
+  }, [aiClinicalInsights.diagnosis, aiClinicalInsights.leftK, aiClinicalInsights.patientName, aiClinicalInsights.rightK, leftAxialDelta, rightAxialDelta]);
+
+  const buildAiReply = (prompt: string) => {
+    const normalizedPrompt = prompt.toLowerCase();
+
+    if (/眼轴|趋势|近三个月/.test(normalizedPrompt)) {
+      return [
+        "眼轴趋势分析：",
+        "",
+        `- 右眼增幅 ${rightAxialDelta.toFixed(2)}mm，${rightAxialDelta >= 0.2 ? "已达到重点风险阈值" : "需持续动态观察"}。`,
+        `- 左眼增幅 ${leftAxialDelta.toFixed(2)}mm，${leftAxialDelta <= 0.05 ? "控制相对稳定" : "仍需关注进展"}。`,
+        "- 建议优先复核右眼镜片配适、夜戴依从性与近距离用眼行为。",
+      ].join("\n");
+    }
+
+    if (/角膜|配适/.test(normalizedPrompt)) {
+      return [
+        "角膜地形图配适评估：",
+        "",
+        `- 当前角膜曲率 OD ${aiClinicalInsights.rightK}，OS ${aiClinicalInsights.leftK}。`,
+        `- 结合当前主诉“${aiClinicalInsights.symptom}”与眼部检查结果，右眼需重点排查镜片定位与压迫环稳定性。`,
+        "- 建议下次复诊增加角膜荧光素染色与镜片配适复核。",
+      ].join("\n");
+    }
+
+    if (/随访|小结|医嘱|复诊/.test(normalizedPrompt)) {
+      return [
+        "本次随访小结与医嘱：",
+        "",
+        `- 本次诊断：${aiClinicalInsights.diagnosis}。`,
+        `- 主要风险：右眼眼轴进展偏快，左眼相对稳定。`,
+        `- 建议医嘱：${aiClinicalInsights.advice}`,
+        "- 下次复诊重点追踪眼轴、角膜曲率与配戴依从性。",
+      ].join("\n");
+    }
+
+    return [
+      "临床辅助结论：",
+      "",
+      `- 当前患者：${aiClinicalInsights.patientName}，${aiClinicalInsights.age} 岁。`,
+      `- 当前诊断：${aiClinicalInsights.diagnosis}。`,
+      `- 右眼风险高于左眼，建议优先关注右眼眼轴变化与镜片配适情况。`,
+      `- 当前医嘱建议：${aiClinicalInsights.advice}`,
+    ].join("\n");
+  };
+
+  const submitAiPrompt = (customPrompt?: string, tag?: string) => {
+    const prompt = (customPrompt ?? aiInput).trim();
+    if (!prompt) return;
+
+    const reply = buildAiReply(prompt);
+    setAiMessages((prev) => [...prev, createAiMessage("user", prompt, tag), createAiMessage("assistant", reply, "AI 分析")]);
+    setAiInput("");
+  };
+
+  const handleQuickAction = (action: ArchiveAiQuickAction) => {
+    setAiPanelOpen(true);
+    submitAiPrompt(action.prompt, action.title);
+  };
+
+  useEffect(() => {
+    if (!selectedVisitId) return;
+    setTimeout(() => {
+      setAiMessages([createAiMessage("assistant", initialAiMessage, "欢迎")]);
+      setAiInput("");
+    }, 0);
+  }, [initialAiMessage, selectedVisitId]);
+
+  useEffect(() => {
+    if (!aiEngineMenuOpen) return;
+
+    const onPointerDown = (event: MouseEvent) => {
+      const container = aiEngineMenuRef.current;
+      if (!container) return;
+      if (container.contains(event.target as Node)) return;
+      setAiEngineMenuOpen(false);
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setAiEngineMenuOpen(false);
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [aiEngineMenuOpen]);
 
   return (
-    <div className="h-full flex flex-col gap-6">
+    <>
+      <div className={clsx("h-full flex flex-col gap-6", activeTab === "visits" && aiPanelOpen && "xl:pr-[496px]")}>
       <div className="bg-white rounded-2xl card-shadow border border-gray-100 p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex items-start gap-3">
@@ -202,6 +473,19 @@ export default function ArchiveDetailContent({
             </button>
           </div>
           <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setAiPanelOpen((value) => !value)}
+              className={clsx(
+                "inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-colors",
+                aiPanelOpen
+                  ? "border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100"
+                  : "border-violet-600 bg-violet-600 text-white hover:bg-violet-700"
+              )}
+            >
+              <Sparkles className="h-4 w-4" />
+              {aiPanelOpen ? "收起临床助手" : "Eye宝临床助手"}
+            </button>
             <button
               className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600 active:bg-primary-700"
               onClick={() => onCreateArchive?.(patient.id)}
@@ -221,9 +505,11 @@ export default function ArchiveDetailContent({
         <div className="mt-4 rounded-2xl border border-gray-100 bg-gray-50/60 p-4">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-3">
-              <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white border border-gray-100 text-primary-600">
-                <UserCircle weight="duotone" className="h-6 w-6" />
-              </div>
+              <ArchiveGenderIcon
+                gender={patient.gender}
+                className="h-8 w-8 rounded-xl border-gray-100 bg-white"
+                iconClassName="h-6 w-6"
+              />
               <div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-xl font-bold text-gray-900">{patient.name}</span>
@@ -231,7 +517,6 @@ export default function ArchiveDetailContent({
                 </div>
                 <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-gray-600">
                   <span className="inline-flex items-center gap-2">
-                    <ArchiveGenderIcon gender={patient.gender} />
                     <span className="font-semibold text-gray-700">{patient.no}</span>
                   </span>
                   <span className="inline-flex items-center gap-2">
@@ -258,7 +543,10 @@ export default function ArchiveDetailContent({
             {tabs.map((t) => (
               <button
                 key={t.key}
-                onClick={() => setActiveTab(t.key)}
+                onClick={() => {
+                  setActiveTab(t.key);
+                  if (t.key !== "visits") setAiPanelOpen(false);
+                }}
                 className={
                   activeTab === t.key
                     ? "rounded-t-xl border border-gray-200 border-b-white bg-white px-5 py-2 text-sm font-semibold text-primary-600 -mb-px"
@@ -278,7 +566,7 @@ export default function ArchiveDetailContent({
                 暂无档案信息
               </div>
             ) : (
-              <div className="grid gap-5 xl:grid-cols-[320px_1fr_240px]">
+              <div className={clsx("grid gap-5", aiPanelOpen ? "xl:grid-cols-[320px_minmax(0,1fr)]" : "xl:grid-cols-[320px_minmax(0,1fr)_240px]")}>
               <aside>
                 <div className="rounded-2xl border border-gray-100 bg-white p-4 xl:sticky xl:top-4 xl:z-10 xl:max-h-[calc(100vh-2rem)] xl:overflow-auto">
                   <div className="flex items-center justify-between">
@@ -331,7 +619,7 @@ export default function ArchiveDetailContent({
                 </div>
               </aside>
 
-              <section className="rounded-2xl border border-gray-100 bg-white p-5">
+              <section className="min-w-0 rounded-2xl border border-gray-100 bg-white p-5">
                 <div id="visit-overview" className="scroll-mt-6">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div>
@@ -444,6 +732,7 @@ export default function ArchiveDetailContent({
                     <div className="text-sm font-bold text-gray-900">诊断</div>
                     {visitEditMode ? (
                       <textarea
+                        rows={3}
                         value={visitDraft.diagnosis}
                         onChange={(e) => setVisitDraft((prev) => ({ ...prev, diagnosis: e.target.value }))}
                         className="mt-4 w-full min-h-[120px] rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-100"
@@ -555,6 +844,73 @@ export default function ArchiveDetailContent({
                       {effectiveVisitDetail.chiefHistory.description}
                     </div>
                   )}
+                </div>
+
+                <div className="mt-5 rounded-3xl border border-gray-100 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] overflow-hidden">
+                  <div className="flex flex-col gap-2 border-b border-gray-100 bg-gray-50 px-6 py-4 md:flex-row md:items-center md:justify-between">
+                    <div className="text-[15px] font-bold text-gray-900">验光检查数据</div>
+                    <div className="text-sm font-medium text-gray-500">
+                      验光师：<span className="font-semibold text-gray-900">{optometryExam.optometrist || "/"}</span>
+                    </div>
+                  </div>
+                  <div className="grid gap-4 p-5 lg:grid-cols-2">
+                    {optometryPanels.map((panel) => {
+                      const eyeData = panel.key === "right" ? optometryExam.right : optometryExam.left;
+                      const metrics = [
+                        { label: "眼轴长度 (AL)", metric: eyeData.axialLength },
+                        { label: "球镜 (SPH)", metric: eyeData.sphere },
+                        { label: "柱镜 (CYL)", metric: eyeData.cylinder },
+                        { label: "角膜曲率 (K1/K2)", value: eyeData.keratometry || "-" },
+                      ];
+
+                      return (
+                        <div
+                          key={panel.key}
+                          className={clsx("rounded-2xl border px-5 py-4", panel.panelClassName)}
+                        >
+                          <div className="flex items-center gap-3 text-[15px] font-bold text-gray-900">
+                            <span className={clsx("h-2.5 w-2.5 rounded-full", panel.dotClassName)} />
+                            <span>{panel.title}</span>
+                          </div>
+                          <div className="mt-5 space-y-4">
+                            {metrics.map((item) => {
+                              const metric = "metric" in item ? item.metric : undefined;
+                              const isRightAxialRisk = panel.key === "right" && item.label === "眼轴长度 (AL)";
+
+                              return (
+                                <div key={item.label} className="flex items-center justify-between gap-4">
+                                  <div className="text-[15px] font-medium text-gray-500">{item.label}</div>
+                                  {metric ? (
+                                    <div className="flex items-center gap-2 text-right">
+                                      <span className="text-[15px] font-bold text-gray-900">{metric.value || "-"}</span>
+                                      {metric.delta ? (
+                                        <span
+                                          className={clsx(
+                                            "text-sm font-semibold",
+                                            isRightAxialRisk
+                                              ? "text-rose-500"
+                                              : metric.trend === "down"
+                                              ? "text-sky-600"
+                                              : metric.trend === "flat"
+                                                ? "text-gray-400"
+                                                : "text-emerald-600"
+                                          )}
+                                        >
+                                          {metric.delta}
+                                        </span>
+                                      ) : null}
+                                    </div>
+                                  ) : (
+                                    <div className="text-[15px] font-bold text-gray-900">{item.value}</div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <div id="visit-exams" className="scroll-mt-6 mt-5 space-y-4">
@@ -841,28 +1197,30 @@ export default function ArchiveDetailContent({
                 </div>
               </section>
 
-              <aside className="hidden xl:block">
-                <div className="rounded-2xl border border-gray-100 bg-white p-4 xl:sticky xl:top-4 xl:z-10 xl:max-h-[calc(100vh-2rem)] xl:overflow-auto">
-                  <div className="text-sm font-bold text-gray-900">目录</div>
-                  <div className="mt-3 space-y-2 text-sm">
-                    {[
-                      { id: "visit-overview", label: "本次就诊详情" },
-                      { id: "visit-basic", label: "基本信息 / 诊断" },
-                      { id: "visit-chief", label: "主诉与病史" },
-                      { id: "visit-exams", label: "检查" },
-                      { id: "visit-treatment", label: "处理" },
-                    ].map((item) => (
-                      <button
-                        key={item.id}
-                        className="block w-full rounded-xl border border-gray-100 bg-gray-50 px-3 py-2 text-left font-semibold text-gray-700 hover:bg-gray-100 active:bg-gray-200"
-                        onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
+              {!aiPanelOpen ? (
+                <aside className="hidden xl:block">
+                  <div className="rounded-2xl border border-gray-100 bg-white p-4 xl:sticky xl:top-4 xl:z-10 xl:max-h-[calc(100vh-2rem)] xl:overflow-auto">
+                    <div className="text-sm font-bold text-gray-900">目录</div>
+                    <div className="mt-3 space-y-2 text-sm">
+                      {[
+                        { id: "visit-overview", label: "本次就诊详情" },
+                        { id: "visit-basic", label: "基本信息 / 诊断" },
+                        { id: "visit-chief", label: "主诉与病史" },
+                        { id: "visit-exams", label: "检查" },
+                        { id: "visit-treatment", label: "处理" },
+                      ].map((item) => (
+                        <button
+                          key={item.id}
+                          className="block w-full rounded-xl border border-gray-100 bg-gray-50 px-3 py-2 text-left font-semibold text-gray-700 hover:bg-gray-100 active:bg-gray-200"
+                          onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </aside>
+                </aside>
+              ) : null}
             </div>
             )
           )}
@@ -1096,6 +1454,208 @@ export default function ArchiveDetailContent({
         </div>
       </div>
 
-    </div>
+      </div>
+
+      {aiPanelOpen && activeTab === "visits" ? (
+        <aside className="hidden xl:fixed xl:right-0 xl:top-20 xl:block xl:h-[calc(100vh-5rem)] xl:w-[472px]">
+          <div className="flex h-full flex-col overflow-hidden rounded-none border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.10)]">
+            <div className="border-b border-slate-100 bg-white px-5 py-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-[24px] font-bold leading-none text-slate-900">Eye宝临床助手</h3>
+                    <div className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-[11px] font-bold text-brand-700">
+                      <Sparkles className="h-3.5 w-3.5" />
+                      双驱动大模型
+                    </div>
+                  </div>
+                  <div className="mt-2 text-xs text-slate-400">AI 生成内容仅供临床参考，不作为最终诊断。</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAiPanelOpen(false)}
+                  className="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-4 no-scrollbar">
+              <div className="border-b border-slate-100 pb-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-bold text-slate-900">快捷分析</div>
+                    <div className="mt-1 text-xs text-slate-400">基于当前患者</div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setAiQuickActionBatch((value) => (value + 1) % quickActionGroups.length)}
+                    className="text-sm font-semibold text-brand-600 hover:text-brand-700"
+                  >
+                    换一批
+                  </button>
+                </div>
+                <div className="mt-3 space-y-2.5">
+                  {currentQuickActions.map((action) => (
+                    <button
+                      key={action.id}
+                      type="button"
+                      onClick={() => handleQuickAction(action)}
+                      className="flex w-full items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-left transition-all hover:border-violet-200 hover:bg-violet-50/30"
+                    >
+                      <div className={clsx("flex h-8 w-8 shrink-0 items-center justify-center rounded-full", action.iconClassName)}>
+                        <action.icon className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-sm font-bold text-slate-900">{action.title}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4 pt-4">
+              {aiMessages.map((message) => (
+                <div
+                  key={message.id}
+                  className={clsx("flex items-start gap-3", message.role === "user" ? "justify-end" : "justify-start")}
+                >
+                  {message.role === "assistant" ? (
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-700">
+                      <Sparkles className="h-4 w-4 text-violet-600" />
+                    </div>
+                  ) : null}
+                  <div
+                    className={clsx(
+                      "max-w-[94%] rounded-[24px] px-4 py-4 shadow-sm",
+                      message.role === "user"
+                        ? "rounded-br-md bg-blue-600 text-white"
+                        : "rounded-bl-md border border-slate-200 bg-white text-slate-700"
+                    )}
+                  >
+                    <div
+                      className={clsx(
+                        "flex items-center gap-2 text-[11px] font-bold",
+                        message.role === "user" ? "justify-end text-right" : "justify-start"
+                      )}
+                    >
+                      {message.role === "user" ? <span className="text-white/70">{message.time}</span> : <span>AI 助手</span>}
+                      {message.tag ? (
+                        <span
+                          className={clsx(
+                            "rounded-full px-2 py-0.5",
+                            message.role === "user" ? "bg-white/15 text-white/90" : "bg-slate-100 text-slate-500"
+                          )}
+                        >
+                          {message.tag}
+                        </span>
+                      ) : null}
+                      {message.role === "assistant" ? <span className="text-slate-400">{message.time}</span> : null}
+                    </div>
+                    <div
+                      className={clsx(
+                        "mt-3 border-t pt-3 whitespace-pre-wrap text-sm leading-7",
+                        message.role === "user" ? "border-white/25 text-white" : "border-slate-200 text-slate-700"
+                      )}
+                    >
+                      {message.content}
+                    </div>
+                  </div>
+                  {message.role === "user" ? (
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+                      你
+                    </div>
+                  ) : null}
+                </div>
+              ))}
+              </div>
+            </div>
+
+            <div className="border-t border-slate-100 bg-white px-5 py-4">
+              <div className="rounded-[24px] border border-slate-200 bg-slate-50/80 p-3">
+                <textarea
+                  value={aiInput}
+                  onChange={(event) => setAiInput(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      submitAiPrompt();
+                    }
+                  }}
+                  rows={2}
+                  placeholder="输入临床问题或指令..."
+                  className="w-full resize-none bg-transparent px-1 py-1 text-sm leading-6 text-slate-700 placeholder:text-slate-400 focus:outline-none"
+                />
+                <div className="mt-3 flex items-center justify-between gap-3">
+                  <div ref={aiEngineMenuRef} className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setAiEngineMenuOpen((value) => !value)}
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50"
+                    >
+                      {aiEngine === "WEyeAI" ? (
+                        <Sparkles className="h-4 w-4 text-violet-600" />
+                      ) : aiEngine === "DeepSeek" ? (
+                        <Cpu className="h-4 w-4 text-slate-600" />
+                      ) : (
+                        <Layers className="h-4 w-4 text-slate-600" />
+                      )}
+                      <span>{aiEngine === "WEyeAI" ? "WEyeAI" : aiEngine === "DeepSeek" ? "DeepSeek" : "千问"}</span>
+                      <ChevronDown className="h-4 w-4 text-slate-400" />
+                    </button>
+                    {aiEngineMenuOpen ? (
+                      <div className="absolute bottom-full left-0 mb-2 w-44 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-200/50">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAiEngine("WEyeAI");
+                            setAiEngineMenuOpen(false);
+                          }}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                        >
+                          <Sparkles className="h-4 w-4 text-violet-600" />
+                          <span className="font-bold">WEyeAI</span>
+                          <span className="ml-auto text-xs text-slate-400">默认</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAiEngine("DeepSeek");
+                            setAiEngineMenuOpen(false);
+                          }}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                        >
+                          <Cpu className="h-4 w-4 text-slate-600" />
+                          <span className="font-bold">DeepSeek</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAiEngine("Qwen");
+                            setAiEngineMenuOpen(false);
+                          }}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                        >
+                          <Layers className="h-4 w-4 text-slate-600" />
+                          <span className="font-bold">千问</span>
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => submitAiPrompt()}
+                    className="inline-flex items-center rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-blue-500/30 transition-colors hover:bg-blue-700"
+                  >
+                    发送
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      ) : null}
+    </>
   );
 }

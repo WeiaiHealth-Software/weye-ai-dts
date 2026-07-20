@@ -1,0 +1,97 @@
+<h2>日志管理页精化方案</h2>
+<p class="subtitle">方向：整页表格为主，操作列提供“查看详情”，点击后从右侧 Drawer 展开完整审计信息。适合医疗系统中后台的日常追责与专项核查。</p>
+
+<div class="section">
+  <div class="mockup">
+    <div class="mockup-header">主页面 · 全页表格工作台</div>
+    <div class="mockup-body">
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px;">
+        <div class="mock-input">日志类型</div>
+        <div class="mock-input">模块</div>
+        <div class="mock-input">操作人</div>
+        <div class="mock-input">关键字</div>
+        <div class="mock-input">开始时间</div>
+        <div class="mock-input">结束时间</div>
+      </div>
+      <div class="placeholder" style="height:360px;">
+        表格列建议：
+        <br>时间 | 日志类型 | 模块 | 操作人 | 操作对象 | 动作 | 改动摘要 | IP / 终端 | 结果 | 风险等级 | 操作
+        <br><br>
+        操作列：
+        <br>查看详情
+        <br><br>
+        行状态强调：
+        <br>高风险红色描边 / 失败浅红底 / 敏感字段高亮
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">列表行示意</div>
+      <div class="mockup-body">
+        <div class="placeholder" style="height:220px;">
+          2026-07-20 10:18:22
+          <br>数据操作日志
+          <br>档案管理
+          <br>zhangmin_admin
+          <br>患者档案 P000238
+          <br>编辑
+          <br>联系方式、随访标签已更新
+          <br>10.12.3.45 / Chrome macOS
+          <br>成功
+          <br>中风险
+          <br>查看详情
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">右侧 Drawer 内容结构</div>
+      <div class="mockup-body">
+        <div class="placeholder" style="height:220px;">
+          1. 事件摘要
+          <br>日志编号 / 时间 / 类型 / 模块 / 结果 / 风险等级
+          <br><br>
+          2. 操作主体
+          <br>操作人账号 / 姓名 / 角色 / 所属中心
+          <br><br>
+          3. 操作对象
+          <br>对象类型 / 对象 ID / 患者姓名或档案号
+          <br><br>
+          4. 变更详情
+          <br>字段名 / 修改前 / 修改后
+          <br><br>
+          5. 访问上下文
+          <br>IP / 设备 / 浏览器 / 请求来源 / traceId
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="keep-table-main" onclick="toggleSelect(this)">
+    <div class="letter">1</div>
+    <div class="content">
+      <h3>保持表格主导</h3>
+      <p>页面不再拆左右双栏，默认全部空间给表格，只有点击“查看详情”时才打开 Drawer。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="drawer-detail" onclick="toggleSelect(this)">
+    <div class="letter">2</div>
+    <div class="content">
+      <h3>Drawer 承载深度信息</h3>
+      <p>主表格只保留摘要，改前改后、设备信息、请求链路都放在 Drawer 中，避免表格过宽。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="medical-audit-focus" onclick="toggleSelect(this)">
+    <div class="letter">3</div>
+    <div class="content">
+      <h3>突出医疗审计字段</h3>
+      <p>特别强化患者标识、敏感字段变更、失败原因和操作者身份，弱化泛系统日志的展示权重。</p>
+    </div>
+  </div>
+</div>

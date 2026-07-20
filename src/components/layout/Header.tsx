@@ -27,10 +27,10 @@ export const Header: React.FC = () => {
   }, [permissions]);
 
   const user = useMemo(() => {
-    const roleTag: '管理员' | '医生' | 'CRC' = '管理员';
-    const nickname = 'Admin';
-    const orgName = isPrivilegedUser ? 'WeiaiHealthcare' : '上海眼病防治中心';
-    const avatarName = encodeURIComponent(nickname);
+    const roleTag = '主任';
+    const nickname = '徐蔚';
+    const orgName = isPrivilegedUser ? '上海眼病防治中心' : '上海眼病防治中心';
+    const avatarName = encodeURIComponent('Xu');
     const avatarUrl = `https://ui-avatars.com/api/?name=${avatarName}&background=6366f1&color=fff`;
     return { roleTag, nickname, orgName, avatarUrl };
   }, [isPrivilegedUser]);
@@ -87,8 +87,11 @@ export const Header: React.FC = () => {
         <div className="relative" ref={menuRef}>
           <div className="flex items-center gap-3 p-1.5 rounded-lg transition-colors select-none">
             <div className="text-right hidden md:block">
-              <div className="flex items-center justify-end gap-2">
-                <span className="text-sm font-bold text-slate-700">{user.nickname}</span>
+              <div className="flex items-center justify-end gap-1">
+                <span className="inline-flex items-center rounded-md border border-emerald-200 bg-emerald-50 px-2 py-0 text-xs font-bold text-emerald-700">
+                  {user.roleTag}
+                </span>
+                <span className="text-md font-bold text-slate-700">{user.nickname}</span>
               </div>
               <p className="flex items-center gap-1 text-xs text-slate-500">
                 <Hospital className="w-4 h-4 text-slate-500" />

@@ -1,0 +1,108 @@
+<h2>日志管理页方案对比</h2>
+<p class="subtitle">目标场景：医疗系统审计追责优先，重点回答“谁在什么时间对什么数据做了什么改动，结果如何，风险多高”。请看 3 个方案，优先关注信息层级和追责效率。</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">方案 A · 审计总览 + 追责列表</div>
+        <div class="mockup-body">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;">
+            <div class="placeholder" style="height:72px;">敏感操作 28</div>
+            <div class="placeholder" style="height:72px;">失败操作 6</div>
+            <div class="placeholder" style="height:72px;">患者档案访问 124</div>
+            <div class="placeholder" style="height:72px;">高风险账号 3</div>
+          </div>
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px;">
+            <div class="placeholder" style="height:230px;">主表格：时间 / 操作人 / 对象 / 动作 / 改动摘要 / 风险 / 结果</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div class="placeholder" style="height:110px;">高风险事件</div>
+              <div class="placeholder" style="height:110px;">最近失败记录</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>方案 A · 推荐</h3>
+      <p>顶部先给审计关键指标，下方以追责表格为主，右侧辅助展示高风险和失败事件，适合日常值守与快速追查。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">方案 B · 时间轴追责中心</div>
+        <div class="mockup-body">
+          <div style="display:grid;grid-template-columns:1.1fr 1.9fr;gap:10px;">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div class="placeholder" style="height:84px;">今日异常告警</div>
+              <div class="placeholder" style="height:84px;">敏感字段变更</div>
+              <div class="placeholder" style="height:84px;">患者数据导出</div>
+            </div>
+            <div class="placeholder" style="height:272px;">按时间轴展示事件流，展开后看改前/改后、来源 IP、终端、审批链</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>方案 B</h3>
+      <p>更强调事件连续性，适合专项审计和事故复盘，但日常批量检索和筛查效率略弱。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">方案 C · 双层日志工作台</div>
+        <div class="mockup-body">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
+            <div class="placeholder" style="height:76px;">登录审计</div>
+            <div class="placeholder" style="height:76px;">数据操作</div>
+            <div class="placeholder" style="height:76px;">系统事件</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.4fr 1.6fr;gap:10px;">
+            <div class="placeholder" style="height:230px;">左：日志表格</div>
+            <div class="placeholder" style="height:230px;">右：选中事件详情，展示改前/改后字段对比</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>方案 C</h3>
+      <p>操作台感更强，适合管理员边筛选边查看详情，但页面更复杂，首次进入时压迫感更重。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>权衡建议</h3>
+  <div class="options">
+    <div class="option" data-choice="a-detail" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>上线最稳</h3>
+        <p>复用现有筛选 + 表格结构最容易，加入统计卡片和高风险摘要即可明显提升页面价值。</p>
+      </div>
+    </div>
+    <div class="option" data-choice="b-detail" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>追责最强</h3>
+        <p>对事故排查体验最好，但需要更多交互设计，落地成本高于当前页面体量。</p>
+      </div>
+    </div>
+    <div class="option" data-choice="c-detail" onclick="toggleSelect(this)">
+      <div class="letter">C</div>
+      <div class="content">
+        <h3>信息最全</h3>
+        <p>适合中后台深度使用者，但如果没有分页、抽屉、折叠细节，页面容易显得拥挤。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>我建议的落地方向</h3>
+  <p>优先采用 <strong>方案 A</strong>，再吸收方案 C 的“选中后看详情”能力。这样既能保留当前页面的简洁结构，又能补足医疗系统最关键的审计追责能力。</p>
+</div>

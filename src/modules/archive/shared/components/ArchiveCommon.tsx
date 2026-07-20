@@ -1,16 +1,31 @@
+import clsx from "clsx";
 import type { PatientProfile } from "../mock/archiveMockData";
 import { profileTagStandard } from "../mock/archiveMockData";
 
-export function ArchiveGenderIcon({ gender }: { gender: "男" | "女" }) {
+export function ArchiveGenderIcon({
+  gender,
+  className,
+  iconClassName,
+}: {
+  gender: "男" | "女";
+  className?: string;
+  iconClassName?: string;
+}) {
   const isMale = gender === "男";
   const toneClass = isMale
     ? "bg-sky-50 text-sky-600 border-sky-100"
     : "bg-pink-50 text-pink-500 border-pink-100";
 
   return (
-    <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full border ${toneClass}`}>
+    <span
+      className={clsx(
+        "inline-flex h-10 w-10 items-center justify-center rounded-full border",
+        toneClass,
+        className
+      )}
+    >
       <svg
-        className="h-4 w-4"
+        className={clsx("h-4 w-4", iconClassName)}
         viewBox="0 0 20 20"
         fill="none"
         stroke="currentColor"

@@ -192,7 +192,7 @@ const MiniProgramPrototype = () => {
             <div className="flex-1">
               <div className="flex items-center space-x-2">
                 <span className="font-bold text-gray-900 text-base">徐蔚 教授</span>
-                <span className="text-xs text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">博导团队</span>
+                <span className="text-xs text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">眼视光领域</span>
               </div>
               <div className="text-xs text-gray-500 mt-1 flex items-center space-x-1">
                 <span className="bg-gray-100 px-1.5 py-0.5 rounded text-[10px]">三甲</span>

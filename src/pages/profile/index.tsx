@@ -1,13 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Building2, Eye, EyeOff, KeyRound, Mail, UserRound, X } from 'lucide-react';
+import { Building2, Eye, EyeOff, KeyRound, UserRound, X } from 'lucide-react';
 import { useHeaderStore } from '@/store/useHeaderStore';
 import { useUsersStore } from '@/store/useUsersStore';
-import { useEdcProjectStore } from '@/store/useEdcProjectStore';
 
 export const Profile: React.FC = () => {
   const setTitle = useHeaderStore(state => state.setTitle);
   const users = useUsersStore(state => state.users);
-  const projects = useEdcProjectStore(state => state.projects);
 
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -36,18 +34,16 @@ export const Profile: React.FC = () => {
     };
   }, [users]);
 
-  const email = useMemo(() => `${me.account}@weiai.com`, [me.account]);
-
-  const totalEnrolled = useMemo(() => projects.reduce((sum, p) => sum + (p.enrolled ?? 0), 0), [projects]);
-
   const stats = useMemo(() => {
+    const orgUserCount = users.filter(u => u.org === me.org).length;
+
     return [
-      { label: '参与项目', value: String(projects.length), helper: '后续可按角色/中心过滤', tone: 'bg-indigo-50 text-indigo-700 border-indigo-100' },
-      { label: '入组人数', value: String(totalEnrolled), helper: '基于项目入组数汇总', tone: 'bg-emerald-50 text-emerald-700 border-emerald-100' },
-      { label: '同组织用户', value: String(users.filter(u => u.org === me.org).length), helper: '便于后续扩展组织视图', tone: 'bg-sky-50 text-sky-700 border-sky-100' },
-      { label: '账号权限', value: me.role.split('、')[0] ?? me.role, helper: '后续可展示更多权限点', tone: 'bg-amber-50 text-amber-700 border-amber-100' }
+      { label: '所属组织', value: me.org, helper: '当前账号归属组织', tone: 'bg-indigo-50 text-indigo-700 border-indigo-100' },
+      { label: '同组织用户', value: String(orgUserCount), helper: '基于当前组织统计', tone: 'bg-emerald-50 text-emerald-700 border-emerald-100' },
+      { label: '账号权限', value: me.role.split('、')[0] ?? me.role, helper: '当前角色主权限标识', tone: 'bg-sky-50 text-sky-700 border-sky-100' },
+      { label: '登录账号', value: me.account, helper: '用于登录与审计追踪', tone: 'bg-amber-50 text-amber-700 border-amber-100' }
     ];
-  }, [me.org, me.role, projects.length, totalEnrolled, users]);
+  }, [me.account, me.org, me.role, users]);
 
   const closePassword = () => {
     setPasswordOpen(false);
