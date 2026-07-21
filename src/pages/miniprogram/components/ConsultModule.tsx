@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowUp, CalendarDays, CheckCircle2, ClipboardList, Clock, FileText, Hash, Mic } from 'lucide-react';
+import { ArrowUp, CheckCircle2, ClipboardList, Clock, FileText, Hash, Mic } from 'lucide-react';
 import { EyeBao } from './EyeBao';
 
 type ConsultModuleProps = {
@@ -42,6 +42,14 @@ const BOOKING_SLOTS: BookingAgentSlot[] = [
   { id: 'sat-am', label: '周六 07/26 10:00', date: '07/26', time: '10:00' },
 ];
 
+const ASSISTANT_BUBBLE_WIDTH = 'w-[calc(100%-0.75rem)]';
+const ASSISTANT_BUBBLE_BASE =
+  'rounded-[22px] rounded-tl-[10px] border border-slate-100 bg-white/96 px-4 py-3 shadow-[0_10px_22px_rgba(15,23,42,0.06)]';
+const ASSISTANT_PLAIN_BUBBLE =
+  'rounded-[22px] rounded-tl-[10px] border border-slate-100 bg-white px-4 py-3 shadow-[0_10px_22px_rgba(15,23,42,0.06)]';
+const ASSISTANT_SUCCESS_BUBBLE =
+  'rounded-[22px] rounded-tl-[10px] border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-700 shadow-[0_10px_22px_rgba(16,185,129,0.08)]';
+
 export function ConsultModule({ inputText, onInputChange }: ConsultModuleProps) {
   const [bookingAgentStep, setBookingAgentStep] = useState<BookingAgentStep>('idle');
   const [selectedBookingSlotId, setSelectedBookingSlotId] = useState<string | null>(null);
@@ -72,7 +80,7 @@ export function ConsultModule({ inputText, onInputChange }: ConsultModuleProps) 
   }
 
   return (
-    <div className="relative flex h-full flex-col pb-44">
+    <div className="relative flex min-h-full flex-col pb-6">
       <div className="relative mt-6 flex flex-col items-center">
         <div className="absolute -top-2 right-2 rounded-2xl rounded-bl-none border border-blue-100 bg-white px-4 py-2 text-sm text-blue-500 shadow-sm">
           点击创建档案，
@@ -101,96 +109,109 @@ export function ConsultModule({ inputText, onInputChange }: ConsultModuleProps) 
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-white via-white to-transparent px-4 pb-6 pt-10">
-        {bookingAgentStep !== 'idle' && (
-          <div className="mb-4 space-y-3">
-            <div className="rounded-[26px] border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-4 shadow-[0_20px_40px_rgba(59,130,246,0.18)] backdrop-blur-sm transition-all duration-300">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm">
-                  <CalendarDays size={16} className="text-blue-500" />
+      {bookingAgentStep !== 'idle' && (
+        <div className="mt-5 px-4">
+          <div className="space-y-3">
+            <div className="flex items-start pl-2">
+              <div className={`${ASSISTANT_BUBBLE_WIDTH} ${ASSISTANT_BUBBLE_BASE}`}>
+                <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-blue-500">Eye Bao</div>
+                <div className="mt-1 text-xs text-blue-700/80">预约小助手</div>
+                <div className="mt-3 text-sm leading-6 text-gray-700">
+                  您上次看的是{LAST_VISITED_DOCTOR.hospital}
+                  {LAST_VISITED_DOCTOR.name}
+                  {LAST_VISITED_DOCTOR.title}，是否直接帮您挂号？
                 </div>
-                <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-500">Eye Bao</div>
-                  <div className="text-xs text-blue-700/80">预约小助手</div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={handleOpenBookingPage}
+                    className="rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-600 transition hover:border-blue-200 hover:bg-white hover:text-blue-600"
+                  >
+                    去预约页面挂号
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDirectBooking}
+                    className="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(59,130,246,0.2)] transition hover:bg-blue-600"
+                  >
+                    直接挂号
+                  </button>
                 </div>
+                {bookingPageHintVisible && (
+                  <div className="mt-3 rounded-2xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-700">
+                    预约页入口待接入，当前先为您保留 Agent 直挂流程。
+                  </div>
+                )}
               </div>
-              <div className="mt-3 text-sm leading-6 text-gray-700">
-                您上次看的是{LAST_VISITED_DOCTOR.hospital}
-                {LAST_VISITED_DOCTOR.name}
-                {LAST_VISITED_DOCTOR.title}，是否直接帮您挂号？
-              </div>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={handleOpenBookingPage}
-                  className="rounded-full border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 shadow-sm transition hover:border-blue-200 hover:text-blue-600"
-                >
-                  去预约页面挂号
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDirectBooking}
-                  className="rounded-full bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(59,130,246,0.26)] transition hover:bg-blue-600"
-                >
-                  直接挂号
-                </button>
-              </div>
-              {bookingPageHintVisible && (
-                <div className="mt-3 rounded-2xl border border-amber-100 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-700">
-                  预约页入口待接入，当前先为您保留 Agent 直挂流程。
-                </div>
-              )}
             </div>
 
             {(bookingAgentStep === 'slots' || bookingAgentStep === 'done') && (
-              <div className="rounded-[24px] border border-white/80 bg-white/95 p-4 shadow-[0_16px_32px_rgba(15,23,42,0.12)] transition-all duration-300">
-                <div className="flex items-center gap-2">
-                  <div className="h-2.5 w-2.5 rounded-full bg-blue-500" />
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-500">Eye Bao</div>
+              <div className="flex justify-end pl-12">
+                <div className="max-w-[72%] rounded-[22px] rounded-tr-[10px] bg-blue-500 px-4 py-3 text-sm leading-6 text-white shadow-[0_10px_22px_rgba(59,130,246,0.22)]">
+                  好的，直接帮我挂号
                 </div>
-                <div className="mt-3 text-sm leading-6 text-gray-700">徐主任未来一周这几天有号，帮您筛好了。</div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {BOOKING_SLOTS.map((slot) => {
-                    const active = selectedBookingSlotId === slot.id;
-                    return (
-                      <button
-                        key={slot.id}
-                        type="button"
-                        onClick={() => handleSelectBookingSlot(slot.id)}
-                        className={
-                          active
-                            ? 'rounded-full bg-blue-500 px-3 py-2 text-xs font-semibold text-white shadow-[0_8px_18px_rgba(59,130,246,0.25)]'
-                            : 'rounded-full border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:border-blue-200 hover:bg-blue-100'
-                        }
-                      >
-                        {slot.label}
-                      </button>
-                    );
-                  })}
+              </div>
+            )}
+
+            {(bookingAgentStep === 'slots' || bookingAgentStep === 'done') && (
+              <div className="flex items-start pl-2">
+                <div className={`${ASSISTANT_BUBBLE_WIDTH} ${ASSISTANT_PLAIN_BUBBLE}`}>
+                  <div className="text-sm leading-6 text-gray-700">徐主任未来一周这几天有号，帮您筛好了。</div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {BOOKING_SLOTS.map((slot) => {
+                      const active = selectedBookingSlotId === slot.id;
+                      return (
+                        <button
+                          key={slot.id}
+                          type="button"
+                          onClick={() => handleSelectBookingSlot(slot.id)}
+                          className={
+                            active
+                              ? 'rounded-full bg-blue-500 px-3 py-2 text-xs font-semibold text-white shadow-[0_8px_18px_rgba(59,130,246,0.2)]'
+                              : 'rounded-full border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:border-blue-200 hover:bg-blue-100'
+                          }
+                        >
+                          {slot.label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )}
 
             {bookingAgentStep === 'done' && selectedSlot && (
-              <div className="rounded-[22px] border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-700 shadow-[0_12px_24px_rgba(16,185,129,0.12)]">
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 size={18} className="mt-0.5 flex-shrink-0 text-emerald-500" />
-                  <div>
-                    <div>已为您锁定徐蔚主任 {selectedSlot.label} 的号源。</div>
-                    <div className="mt-1 text-xs text-emerald-600/80">稍后可在预约记录中查看。</div>
-                  </div>
+              <div className="flex justify-end pl-12">
+                <div className="max-w-[72%] rounded-[22px] rounded-tr-[10px] bg-blue-500 px-4 py-3 text-sm leading-6 text-white shadow-[0_10px_22px_rgba(59,130,246,0.22)]">
+                  那就约 {selectedSlot.label}
                 </div>
-                <button
-                  type="button"
-                  className="mt-3 inline-flex items-center rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-emerald-700 shadow-sm"
-                >
-                  查看预约
-                </button>
+              </div>
+            )}
+
+            {bookingAgentStep === 'done' && selectedSlot && (
+              <div className="flex items-start pl-2">
+                <div className={`${ASSISTANT_BUBBLE_WIDTH} ${ASSISTANT_SUCCESS_BUBBLE}`}>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 size={18} className="mt-0.5 flex-shrink-0 text-emerald-500" />
+                    <div>
+                      <div>已为您锁定徐蔚主任 {selectedSlot.label} 的号源。</div>
+                      <div className="mt-1 text-xs text-emerald-600/80">稍后可在预约记录中查看。</div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex items-center rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-emerald-700 shadow-sm"
+                  >
+                    查看预约
+                  </button>
+                </div>
               </div>
             )}
           </div>
-        )}
+        </div>
+      )}
 
+      <div className="mt-auto bg-gradient-to-t from-white via-white to-transparent px-4 pb-6 pt-8">
         <div className="no-scrollbar mb-4 flex space-x-3 overflow-x-auto pb-1">
           <button
             type="button"
