@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  Database,
+  // Database,
   // Palette,
   RefreshCw,
   ChevronDown,
@@ -165,7 +165,7 @@ export const Sidebar: React.FC = () => {
           )}
         </div>
 
-        <div className="my-2 border-b border-slate-200"></div>
+        {/* <div className="my-2 border-b border-slate-200"></div> */}
         {/* <NavLink
           to="/index/ui-spec"
           className={({ isActive }) => classNames(
@@ -178,7 +178,7 @@ export const Sidebar: React.FC = () => {
           </span>
           {!collapsed && <span className="ml-3 origin-left">系统 UI 组件规范</span>}
         </NavLink> */}
-        <NavLink
+        {/* <NavLink
           to="/miniprogram"
           className={({ isActive }) => classNames(
             "flex items-center px-4 py-3 rounded-xl transition-all group font-medium whitespace-nowrap overflow-hidden",
@@ -189,7 +189,7 @@ export const Sidebar: React.FC = () => {
             <Database size={20} />
           </span>
           {!collapsed && <span className="ml-3 origin-left">Eye 宝小程序</span>}
-        </NavLink>
+        </NavLink> */}
       </nav>
 
       <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-row items-center justify-between overflow-hidden">
